@@ -1,20 +1,10 @@
-import * as readline from "node:readline/promises";
-import { stdin, stdout } from "node:process";
+import express from "express";
 
+const app = express();
+const port = process.env.PORT || 3000;
 
-console.log("Type 'quit' to exit.");
+app.get("/", (request, response) => {
+    response.send({ worked: true });
+});
 
-const rl = readline.createInterface({ input: stdin, output: stdout });
-
-while (true) {
-    const input = await rl.question("> ");
-    let trimmed = input.replace(/\s/g, "");
-    console.log(input);
-    if (trimmed == "quit") {
-        break;
-    }
-}
-
-rl.close();
-
-console.log("program completed.");
+app.listen(port, () => console.log(`App is running on port ${port}`));
