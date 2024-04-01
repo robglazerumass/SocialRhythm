@@ -1,0 +1,24 @@
+{
+    "type": "module",
+    "name": "socialrhythm",
+    "version": "0.1.0",
+    "description": "Backend to Social Rhythm",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/robglazerumass/SocialRhthym.git"
+    },
+    "author": "Chaniel Abou-Ezzi",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/robglazerumass/SocialRhthym/issues"
+    },
+    "homepage": "https://github.com/robglazerumass/SocialRhthym#readme",
+    "dependencies": {
+        "express": "^4.19.2"
+    }
+}
