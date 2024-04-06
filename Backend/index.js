@@ -11,21 +11,12 @@ app.get("/", (request, response) => {
 
 app.get('/api/login', async (req, res) => {
     let responseData;
-    let result = await UserData.findOne({username: req.query.name});
-
-    if(result == null){
-        responseData = {result: 'FAILURE', message: 'Failed to login, username could not be found'};
-    }
-    else{
-        result = await UserData.find({username: req.query.name, password: req.query.pass});
-        
-        if(result.length == 0){
-            responseData = {result: 'FAILURE', message: 'Failed to login, password is invalid'};
-        }
-        else{
-            responseData = {result: 'SUCCESS', account_info: result[0]._id};
-        }
-    }
+    let result = await UserData.find({username: req.query.name, password: req.query.pass});
+    
+    if(result.length == 0)
+        responseData = {result: 'FAILURE', message: 'Failed to Login, Username or Password Incorrect'};
+    else
+        responseData = {result: 'SUCCESS', account_info: result[0]._id};
 
     res.json(responseData);
   });
