@@ -10,6 +10,7 @@ app.get("/", (request, response) => {
 });
 
 app.get('/api/login', async (req, res) => {
+    // TODO Fix the query names for name and password
     let responseData;
     let result = await UserData.find({username: req.query.name, password: req.query.pass});
     
@@ -18,8 +19,35 @@ app.get('/api/login', async (req, res) => {
     else
         responseData = {result: 'SUCCESS', account_info: result[0]._id};
 
+    
     res.json(responseData);
   });
+
+
+app.get('/api/signup', async (req, res) => {
+    let responseData;
+    let query = req.query
+    // Check that username is unique
+    let result = await UserData.find({username: query.username})
+
+    if (result.length > 0)
+        responseData = {result: 'FAILURE', message: 'Username Already Exists'};
+    else{
+        // create a new user
+
+        const user = await UserData.create({
+            user_first_name: query.firstname,
+            user_last_name: query.lastname,
+            username: query.username,
+            password: query.password
+        });
+
+        responseData = {result: 'SUCCESS', message: 'New Account Created'};
+
+    }
+    res.json(responseData)
+
+})
 
 app.listen(port, () => console.log(`App is running on port ${port}`));
 connect();
