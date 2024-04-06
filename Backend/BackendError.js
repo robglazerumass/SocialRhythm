@@ -12,8 +12,7 @@ class BackendError extends Error {
  * List of backend error types.
  */
 export const BackendErrorType = Object.freeze({
-    USERNAME_NOT_EXISTS: new BackendError(701, "This username does not exist."),
-    INCORRECT_PASSWORD: new BackendError(702, "Incorrect password."),
+    INVALID_LOGIN: new BackendError(701, "Username or password incorrect."),
     INVALID_EMAIL: new BackendError(703, "Invalid email."),
     USERNAME_EXISTS: new BackendError(704, "This username already exists."),
 });
