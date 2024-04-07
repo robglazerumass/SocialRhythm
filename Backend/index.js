@@ -14,7 +14,7 @@ app.get("/", (request, response) => {
 // ex: implemented in code for login : isValidQuery([query.username, query.password])
 // checks if any query field you are expecting is undefined
 function isValidQuery(queryList){
-    return queryList.reduce((acc, field) => (field != undefined) && acc, true)
+    return queryList.every(field => field !== undefined);
 }
 
 
@@ -22,9 +22,9 @@ function isValidQuery(queryList){
 // takes in a query with above fields and returns a JSON Success or throws a Backend Error
 app.get('/api/login', async (req, res, next) => {
     try {
-        let query = req.query
+        let query = req.query;
         if(!isValidQuery([query.username, query.password]))
-            throw BackendErrorType.INVALID_QUERY
+            throw BackendErrorType.INVALID_QUERY;
 
         let result = await UserData.findOne({ username: query.username, password: query.password });
 
@@ -43,9 +43,9 @@ app.get('/api/login', async (req, res, next) => {
 // takes in a query with above fields and returns a JSON Success or throws a Backend Error
 app.get('/api/signup', async (req, res, next) => {
     try {
-        let query = req.query
+        let query = req.query;
         if(!isValidQuery([query.firstname, query.lastname, query.username, query.password]))
-            throw BackendErrorType.INVALID_QUERY
+            throw BackendErrorType.INVALID_QUERY;
 
         let result = await UserData.findOne({ username: query.username })
 
