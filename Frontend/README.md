@@ -8,7 +8,7 @@ npm install
 npm run dev
 ```
 
-The live version should be on: https://localhost:5173
+The live version should be on: https://localhost:5173/
 
 ## React + TypeScript + Vite
 
