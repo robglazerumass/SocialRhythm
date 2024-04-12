@@ -55,7 +55,7 @@ function Login() {
 						<div>
 							<p>
 								Don't have an account yet?
-								<Link to={"signup"}> Sign up!</Link>
+								<Link to={"../signup"}> Sign up!</Link>
 							</p>
 						</div>
 					</div>
