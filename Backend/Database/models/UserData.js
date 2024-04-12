@@ -5,7 +5,8 @@ const userSchema = new Schema({
     user_first_name: String,
     user_last_name: String,
     username: String,
-    password: String
+    password: String,
+    friends: [String]
 }, {collection: 'User Data'});
 
 const UserData = model('User Data', userSchema);
