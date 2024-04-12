@@ -68,6 +68,42 @@ app.get('/api/signup', async (req, res, next) => {
     }
 })
 
+//Add friend : {username, friendUsername}
+// takes in a query with above fields and returns a JSON Success or throws a Backend Error
+app.get('/api/addfriend', async (req, res, next) => {
+    try {
+        let { username, friendUsername } = req.query;
+        if(!isValidQuery([username, friendUsername]))
+            throw BackendErrorType.INVALID_QUERY;
+
+        if (!await userExists(friendUsername))
+            throw BackendErrorType.FRIEND_NOT_FOUND;
+
+        if (username === friendUsername)
+            throw BackendErrorType.SELF_ADD;
+
+        const [user] = await Promise.all([
+            UserData.findOne({ username })
+        ]);
+
+        if (user.friends.includes(friendUsername))
+            throw BackendErrorType.ALREADY_FRIENDS;
+
+        user.friends.push(friendUsername);
+        await user.save();
+
+        const responseData = { result: 'SUCCESS', message: 'Friend added successfully' };
+        res.json(responseData);
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+async function userExists(username) {
+    return await UserData.countDocuments({ username }) > 0;
+}
+
 // Handles errors thrown to Express
 app.use((error, req, res, next) => {
     const msg = error.message !== undefined ? error.message : "Something went wrong.";
