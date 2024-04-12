@@ -8,7 +8,9 @@ function App() {
 				<Link to={"login"}>
 					<button className="btn btn-wide">Login</button>
 				</Link>
-				<button className="btn btn-wide">Sign-up</button>
+				<Link to={"signup"}>
+					<button className="btn btn-wide">Sign-up</button>
+				</Link>
 			</div>
 		</div>
 	);
