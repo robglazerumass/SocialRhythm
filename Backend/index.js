@@ -1,9 +1,11 @@
 import express, { query } from "express";
+import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
 import { UserData } from "./Database/models/UserData.js";
 import { BackendErrorType } from "./BackendError.js";
 
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 3000;
 
 app.get("/", (request, response) => {

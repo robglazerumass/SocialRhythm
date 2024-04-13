@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-const uri = 'mongodb+srv://gouweijan:<password>@socialrhythmdb.fupvhxa.mongodb.net/SocialRhythmnDB?retryWrites=true&w=majority&appName=SocialRhythmDB';
+dotenv.config();
+
+const password = process.env.DB_PASSWORD;
+const uri = 'mongodb+srv://gouweijan:'+password+'@socialrhythmdb.fupvhxa.mongodb.net/SocialRhythmnDB?retryWrites=true&w=majority&appName=SocialRhythmDB';
 
 async function connect(){
     try{
