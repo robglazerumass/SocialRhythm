@@ -74,6 +74,15 @@ app.post('/api/signup', async (req, res, next) => {
     }
 })
 
+// feed fields: { userId, xPosts }
+// takes in a query with above fields and returns a JSON list of posts or throws a Backend Error
+app.get('/api/feed', async (req, res, next) => {
+    // Test code for getting based on objectId
+    let result = await UserData.find({$or: [ {"_id": new ObjectId("660a180eaeb3f31d0921fef4")}, {"_id": new ObjectId("661184ee2fa15b54bcbe0bc0")}]});
+    console.log(result[0]._id);
+    res.json(result);
+})
+
 //Add friend : {username, friendUsername}
 // takes in a query with above fields and returns a JSON Success or throws a Backend Error
 app.get('/api/addfriend', async (req, res, next) => {
