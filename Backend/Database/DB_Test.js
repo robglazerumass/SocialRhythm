@@ -1,5 +1,5 @@
 import readline from 'readline';
-import { UserData } from './models/UserData.js';
+import { UserData } from './models/DB_Schemas.js';
 
 async function run(){
     let first_name;

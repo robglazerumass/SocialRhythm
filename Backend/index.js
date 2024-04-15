@@ -1,7 +1,7 @@
 import express, { query } from "express";
 import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
-import { UserData } from "./Database/models/UserData.js";
+import { UserData, PostData, CommentData} from "./Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
 
 const app = express();
@@ -41,12 +41,12 @@ app.get('/api/login', async (req, res, next) => {
     }
 });
 
-// Signup query fields : { firsname, lastname, username, password }
+// Signup query fields : { firsname, lastname, username, password, email }
 // takes in a query with above fields and returns a JSON Success or throws a Backend Error
-app.get('/api/signup', async (req, res, next) => {
+app.post('/api/signup', async (req, res, next) => {
     try {
         let query = req.query;
-        if(!isValidQuery([query.firstname, query.lastname, query.username, query.password]))
+        if(!isValidQuery([query.firstname, query.lastname, query.username, query.password, query.email]))
             throw BackendErrorType.INVALID_QUERY;
 
         let result = await UserData.findOne({ username: query.username })
@@ -58,8 +58,12 @@ app.get('/api/signup', async (req, res, next) => {
         const user = await UserData.create({
             user_first_name: query.firstname,
             user_last_name: query.lastname,
+            user_email: query.email,
             username: query.username,
-            password: query.password
+            password: query.password,
+            user_bio: "",
+            user_friends_list: [], 
+            user_post_list: []
         });
 
         const responseData = { result: 'SUCCESS', message: 'New Account Created' };
