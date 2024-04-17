@@ -106,10 +106,6 @@ app.get('/api/addfriend', async (req, res, next) => {
     }
 });
 
-async function userExists(username) {
-    return await UserData.countDocuments({ username }) > 0;
-}
-
 // Handles errors thrown to Express
 app.use((error, req, res, next) => {
     const msg = error.message !== undefined ? error.message : "Something went wrong.";
