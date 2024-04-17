@@ -13,8 +13,10 @@ const userSchema = new Schema({
     username: String,
     password: String,
     user_bio: String, 
-    user_friends_list: [ObjectId],
-    user_post_list: [ObjectId]
+    user_following_list: [ObjectId],
+    user_follower_list: [ObjectId],
+    user_post_list: [ObjectId],
+    date_created: Date,
 }, {collection: 'User Data'});
 const UserData = model('User Data', userSchema);
 
@@ -30,6 +32,7 @@ const postSchema = new Schema({
     likes_list: [ObjectId],
     dislikes_list: [ObjectId],
     comments_list: [ObjectId],
+    date_created: Date,
 }, {collection: 'Post Data'});
 const PostData = model('Post Data', postSchema);
 
@@ -40,7 +43,8 @@ const commentSchema = new Schema({
     username: String,
     comment_string: String,
     comment_like_list: [ObjectId],
-    comment_dislike_list: [ObjectId]
+    comment_dislike_list: [ObjectId],
+    date_created: Date,
 }, {collection: 'Comment Data'});
 const CommentData = model('Comment Data', commentSchema);
 
