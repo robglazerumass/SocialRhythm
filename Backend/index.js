@@ -62,8 +62,10 @@ app.post('/api/signup', async (req, res, next) => {
             username: query.username,
             password: query.password,
             user_bio: "",
-            user_friends_list: [], 
-            user_post_list: []
+            user_following_list: [], 
+            user_follower_list: [],
+            user_post_list: [],
+            date_created: new Date(),
         });
 
         const responseData = { result: 'SUCCESS', message: 'New Account Created' };
@@ -114,10 +116,6 @@ app.get('/api/addfriend', async (req, res, next) => {
         next(error);
     }
 });
-
-async function userExists(username) {
-    return await UserData.countDocuments({ username }) > 0;
-}
 
 // Handles errors thrown to Express
 app.use((error, req, res, next) => {
