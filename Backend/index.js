@@ -79,23 +79,22 @@ app.post('/api/signup', async (req, res, next) => {
 app.get('/api/addfriend', async (req, res, next) => {
     try {
         let { username, friendUsername } = req.query;
-        if(!isValidQuery([username, friendUsername]))
+        if (!isValidQuery([username, friendUsername]))
             throw BackendErrorType.INVALID_QUERY;
-
-        if (!await userExists(friendUsername))
-            throw BackendErrorType.FRIEND_NOT_FOUND;
 
         if (username === friendUsername)
             throw BackendErrorType.SELF_ADD;
 
-        const [user] = await Promise.all([
-            UserData.findOne({ username })
-        ]);
+        const user = await UserData.findOne({ username });
+        const friend = await UserData.findOne({ username: friendUsername });
 
-        if (user.friends.includes(friendUsername))
+        if (!friend)
+            throw BackendErrorType.FRIEND_NOT_FOUND;
+
+        if (user.user_friends_list.includes(friend._id))
             throw BackendErrorType.ALREADY_FRIENDS;
 
-        user.friends.push(friendUsername);
+        user.user_friends_list.push(friend._id);
         await user.save();
 
         const responseData = { result: 'SUCCESS', message: 'Friend added successfully' };
