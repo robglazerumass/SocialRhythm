@@ -62,8 +62,10 @@ app.post('/api/signup', async (req, res, next) => {
             username: query.username,
             password: query.password,
             user_bio: "",
-            user_friends_list: [], 
-            user_post_list: []
+            user_following_list: [], 
+            user_follower_list: [],
+            user_post_list: [],
+            date_created: new Date(),
         });
 
         const responseData = { result: 'SUCCESS', message: 'New Account Created' };
