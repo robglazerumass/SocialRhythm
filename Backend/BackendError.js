@@ -18,5 +18,6 @@ export const BackendErrorType = Object.freeze({
     INVALID_QUERY: new BackendError(705, "Invalid query fields"),
     SELF_ADD: new BackendError(706, "Cannot add yourself as a friend."),
     FRIEND_NOT_FOUND: new BackendError(707, "Friend not found."),
-    ALREADY_FRIENDS: new BackendError(708, "Already friends with this user.")
+    ALREADY_FRIENDS: new BackendError(708, "Already friends with this user."),
+    MISSING_FIELDS: new BackendError(709, "Your post is missing neccesary fields")
 });
