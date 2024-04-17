@@ -62,7 +62,7 @@ app.post('/api/signup', async (req, res, next) => {
             username: query.username,
             password: query.password,
             user_bio: "",
-            user_following_list: [], 
+            user_following_list: [new ObjectId()], 
             user_follower_list: [],
             user_post_list: [],
             date_created: new Date(),
@@ -79,10 +79,25 @@ app.post('/api/signup', async (req, res, next) => {
 // feed fields: { userId, xPosts }
 // takes in a query with above fields and returns a JSON list of posts or throws a Backend Error
 app.get('/api/feed', async (req, res, next) => {
-    // Test code for getting based on objectId
-    let result = await UserData.find({$or: [ {"_id": new ObjectId("660a180eaeb3f31d0921fef4")}, {"_id": new ObjectId("661184ee2fa15b54bcbe0bc0")}]});
-    console.log(result[0]._id);
-    res.json(result);
+    try{
+        let query = req.query
+        if(!isValidQuery([query.userId, query.xPosts]))
+            throw BackendErrorType.INVALID_QUERY
+
+        let user = await UserData.find({_id: query.userId})
+        let followingList = user.user_following_list.map(x => {return {"user_id": new ObjectId(x)}})
+        
+        console.log(followingList)
+        
+
+        let result = await UserData.find({$or: [followingList]});
+        
+        console.log(result[0]._id);
+        res.json(result);
+    }
+    catch (error) {
+        next(error)
+    }
 })
 
 //Add friend : {username, friendUsername}
