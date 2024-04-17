@@ -3,6 +3,7 @@ import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
 import { UserData, PostData, CommentData} from "./Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
+import {ObjectId} from "mongodb";
 
 const app = express();
 app.use(cors());
@@ -80,19 +81,23 @@ app.post('/api/signup', async (req, res, next) => {
 // takes in a query with above fields and returns a JSON list of posts or throws a Backend Error
 app.get('/api/feed', async (req, res, next) => {
     try{
-        let query = req.query
+        const query = req.query
         if(!isValidQuery([query.userId, query.xPosts]))
             throw BackendErrorType.INVALID_QUERY
 
-        let user = await UserData.find({_id: query.userId})
-        let followingList = user.user_following_list.map(x => {return {"user_id": new ObjectId(x)}})
-        
-        console.log(followingList)
-        
+        let user = await UserData.findOne({_id: query.userId})
 
-        let result = await UserData.find({$or: [followingList]});
+        const followingList = user.user_following_list
+
+        if(followingList === undefined || followingList.length === 0)
+            throw BackendErrorType.FEED_DNE
         
-        console.log(result[0]._id);
+        // sorted by most recent
+        let result = await PostData.find({$or: followingList.map(x => {return {"user_id": new ObjectId(x)}})})
+            .sort({date_created: -1})
+            .limit(query.xPosts)
+        
+        // Consider returning something more useful for the frontend
         res.json(result);
     }
     catch (error) {
