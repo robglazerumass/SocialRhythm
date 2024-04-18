@@ -281,7 +281,7 @@ To be filled programatically
 */
 
 postMockData.forEach((post) => {
-    const user = userData.findOne({ username: post.username }).dislikes;
+    const user = userData.findOne({ username: post.username })._id;
     const likes = post.likes_list.map(username => userData.findOne({ username: username })._id);
     const dislikes = post.dislikes_list.map(username => userData.findOne({ username: username })._id);
     post.user_id = user;
@@ -372,7 +372,7 @@ postData.find().forEach(post => {
     // Random number of comments from comment pool, posted by random user
     for (let i = 0; i < Math.random() * 5; i++) {
         let comment = commentMockDataPool[Math.floor(Math.random() * commentMockDataPool.length)];
-        let user = userData.aggregate([{ $sample: { size: 1 } }]);
+        let user = userData.aggregate([{ $sample: { size: 1 } }]).next();
         comment.post_id = post._id;
         comment.user_id = user._id;
         comment.username = user.username;
