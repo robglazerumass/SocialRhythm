@@ -20,4 +20,5 @@ export const BackendErrorType = Object.freeze({
     FRIEND_NOT_FOUND: new BackendError(707, "Friend not found."),
     ALREADY_FRIENDS: new BackendError(708, "Already friends with this user."),
     FEED_DNE: new BackendError(709, "Feed Does Not Exist"),
+    USER_DNE: new BackendError(710, "User Does Not Exist"),
 });

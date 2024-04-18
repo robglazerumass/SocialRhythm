@@ -87,6 +87,9 @@ app.get('/api/feed', async (req, res, next) => {
 
         let user = await UserData.findOne({_id: query.userId})
 
+        if(user === null || user === undefined)
+            throw BackendErrorType.USER_DNE
+
         const followingList = user.user_following_list
 
         if(followingList === undefined || followingList.length === 0)
@@ -115,7 +118,7 @@ app.get('/api/addfriend', async (req, res, next) => {
 
         if (!await userExists(friendUsername))
             throw BackendErrorType.FRIEND_NOT_FOUND;
-
+        
         if (username === friendUsername)
             throw BackendErrorType.SELF_ADD;
 
