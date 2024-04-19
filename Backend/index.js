@@ -118,27 +118,56 @@ app.get('/api/feed', async (req, res, next) => {
 app.get('/api/addfriend', async (req, res, next) => {
     try {
         let { username, friendUsername } = req.query;
-        if(!isValidQuery([username, friendUsername]))
+        if (!isValidQuery([username, friendUsername]))
             throw BackendErrorType.INVALID_QUERY;
 
-        if (!await userExists(friendUsername))
-            throw BackendErrorType.FRIEND_NOT_FOUND;
-        
         if (username === friendUsername)
             throw BackendErrorType.SELF_ADD;
 
-        const [user] = await Promise.all([
-            UserData.findOne({ username })
-        ]);
+        const user = await UserData.findOne({ username });
+        const friend = await UserData.findOne({ username: friendUsername });
 
-        if (user.friends.includes(friendUsername))
+        if (!friend)
+            throw BackendErrorType.FRIEND_NOT_FOUND;
+
+        if (user.user_friends_list.includes(friend._id))
             throw BackendErrorType.ALREADY_FRIENDS;
 
-        user.friends.push(friendUsername);
+        user.user_friends_list.push(friend._id);
         await user.save();
 
         const responseData = { result: 'SUCCESS', message: 'Friend added successfully' };
         res.json(responseData);
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Create post query fields: { userId, username, title, description, spotifyLink, imageUrl }
+// takes in a query with above fields and returns a JSON Success or throws a Backend Error
+app.post('/api/createpost', async (req, res, next) => {
+    try {
+        let { userId, username, title, description, spotifyLink, imageUrl } = req.body;
+
+        if (!userId || !username || !title || !description) {
+            throw BackendErrorType.MISSING_FIELDS;
+        }
+
+        const newPost = new PostData({
+            user_id: userId,
+            username: username,
+            title: title,
+            description: description,
+            spotify_link: spotifyLink || '',
+            image_url: imageUrl || '',
+            likes_list: [],
+            dislikes_list: [],
+            comments_list: []
+        });
+
+        await newPost.save();
+        res.json({ result: 'SUCCESS', message: 'Post created successfully', postId: newPost._id });
 
     } catch (error) {
         next(error);

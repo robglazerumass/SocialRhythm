@@ -19,7 +19,5 @@ export const BackendErrorType = Object.freeze({
     SELF_ADD: new BackendError(706, "Cannot add yourself as a friend."),
     FRIEND_NOT_FOUND: new BackendError(707, "Friend not found."),
     ALREADY_FRIENDS: new BackendError(708, "Already friends with this user."),
-    FEED_DNE: new BackendError(709, "Feed Does Not Exist."),
-    USER_DNE: new BackendError(710, "User Does Not Exist."),
-    INVALID_FEED_PAGE: new BackendError(711, "This is an invalid page number for feed."),
+    MISSING_FIELDS: new BackendError(709, "Your post is missing neccesary fields")
 });
