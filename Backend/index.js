@@ -3,6 +3,7 @@ import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
 import { UserData, PostData, CommentData} from "./Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
+import {ObjectId} from "mongodb";
 
 const app = express();
 app.use(cors());
@@ -62,7 +63,7 @@ app.post('/api/signup', async (req, res, next) => {
             username: query.username,
             password: query.password,
             user_bio: "",
-            user_following_list: [], 
+            user_following_list: [new ObjectId()], 
             user_follower_list: [],
             user_post_list: [],
             date_created: new Date(),
@@ -73,6 +74,42 @@ app.post('/api/signup', async (req, res, next) => {
 
     } catch (error) {
         next(error);
+    }
+})
+
+// feed fields: { userId, xPosts, pageNum }
+// pageNum starts at 0 ... N/xPosts
+// takes in a query with above fields and returns a JSON list of posts or throws a Backend Error
+app.get('/api/feed', async (req, res, next) => {
+    try{
+        const query = req.query
+        if(!isValidQuery([query.userId, query.xPosts, query.pageNum]))
+            throw BackendErrorType.INVALID_QUERY
+
+        let user = await UserData.findOne({_id: query.userId})
+
+        if(user === null || user === undefined)
+            throw BackendErrorType.USER_DNE
+
+        if(query.pageNum < 0)
+            throw BackendErrorType.INVALID_FEED_PAGE
+
+        const followingList = user.user_following_list
+
+        if(followingList === undefined || followingList.length === 0)
+            throw BackendErrorType.FEED_DNE
+        
+        // sorted by most recent
+        let result = await PostData.find({$or: followingList.map(x => {return {"user_id": new ObjectId(x)}})})
+            .sort({date_created: -1})
+            .skip(query.pageNum * query.xPosts)
+            .limit(query.xPosts)
+        
+        // Front-End just wanted us to return the JSON directly to them
+        res.json(result);
+    }
+    catch (error) {
+        next(error)
     }
 })
 

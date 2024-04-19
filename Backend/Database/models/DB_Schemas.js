@@ -4,7 +4,7 @@ import {ObjectId} from "mongodb";
 
 
 
-//user_friends_list is a list of user id values
+//user_following_list and user_follower_list is a list of user id values
 //user_post_list is a list of post id values
 //date_created is a Date object in UTC
 const userSchema = new Schema({  
