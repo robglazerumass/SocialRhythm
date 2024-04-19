@@ -77,18 +77,22 @@ app.post('/api/signup', async (req, res, next) => {
     }
 })
 
-// feed fields: { userId, xPosts }
+// feed fields: { userId, xPosts, pageNum }
+// pageNum starts at 0 ... N/xPosts
 // takes in a query with above fields and returns a JSON list of posts or throws a Backend Error
 app.get('/api/feed', async (req, res, next) => {
     try{
         const query = req.query
-        if(!isValidQuery([query.userId, query.xPosts]))
+        if(!isValidQuery([query.userId, query.xPosts, query.pageNum]))
             throw BackendErrorType.INVALID_QUERY
 
         let user = await UserData.findOne({_id: query.userId})
 
         if(user === null || user === undefined)
             throw BackendErrorType.USER_DNE
+
+        if(query.pageNum < 0)
+            throw BackendErrorType.INVALID_FEED_PAGE
 
         const followingList = user.user_following_list
 
@@ -98,9 +102,10 @@ app.get('/api/feed', async (req, res, next) => {
         // sorted by most recent
         let result = await PostData.find({$or: followingList.map(x => {return {"user_id": new ObjectId(x)}})})
             .sort({date_created: -1})
+            .skip(query.pageNum * query.xPosts)
             .limit(query.xPosts)
         
-        // Consider returning something more useful for the frontend
+        // Front-End just wanted us to return the JSON directly to them
         res.json(result);
     }
     catch (error) {
