@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import Login from "./page/Login.tsx";
 import SignUp from "./page/SignUp.tsx";
+import Feed from "./page/Feed.tsx";
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -21,6 +22,16 @@ const router = createBrowserRouter([
 		path: "signup",
 		element: <SignUp />
 	},
+	{
+		path: "friends",
+		element: <Feed />
+	},
+
+	{
+		path: "trending",
+		element: <Feed />
+	}
+	
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
