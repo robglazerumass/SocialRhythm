@@ -1,18 +1,11 @@
-import { ReactNode } from "react";
-
-function MenuBar({ component }: { component: ReactNode }) {
+function MenuBar() {
 	return (
-		<div className="drawer lg:drawer-open">
+		<div className="drawer">
 			<input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
 			<div className="drawer-content flex flex-col items-center justify-center">
-				{component}
-				<label
-					htmlFor="my-drawer-2"
-					className="btn btn-primary drawer-button lg:hidden">
-					Open drawer
-				</label>
+				{/* Page content here */}
 			</div>
-			<div className="drawer-side">
+			<div className="drawer-side z-10">
 				<label
 					htmlFor="my-drawer-2"
 					aria-label="close sidebar"
