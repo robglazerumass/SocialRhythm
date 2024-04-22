@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import signup_img from "../assets/signup_img.jpg";
@@ -6,6 +6,7 @@ import signup_img from "../assets/signup_img.jpg";
 function Login() {
 	const [loginForm, setLoginForm] = useState({ username: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
+	const navigate = useNavigate();
 	// const config = {
 	// 	headers: {
 	// 		"Access-Control-Allow-Origin": "*",
@@ -27,9 +28,7 @@ function Login() {
 		const url = `http://localhost:3000/api/login?username=${loginForm.username}&password=${loginForm.password}`;
 		const data = await axios.get(url).then((res) => res.data);
 		console.log(data);
-		const nextURL = `http://localhost:3000/api/feed?userId=${data.account_info}&xPosts=3&pageNum=0`;
-		const feedData = await axios.get(nextURL).then((res) => res.data);
-		console.log(feedData);
+		navigate("/feed", {state: {userid: data}});
 	};
 
 	return (

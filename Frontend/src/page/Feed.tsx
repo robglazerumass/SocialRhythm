@@ -4,6 +4,9 @@ import Interaction from "../components/Interaction";
 import { Bars3Icon } from "@heroicons/react/16/solid";
 import MenuBar2 from "../components/MenuBar2";
 import postMockData from "../mockData/postMockData";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Post({
 	username,
@@ -49,6 +52,18 @@ export default function Feed() {
 		"https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
 	const defaultDesc =
 		"Excited for the new album release from my favorite artist!";
+	const [feedData, setFeedData] = useState(postMockData);
+	const { state } = useLocation();
+	const { userid } = state;
+	useEffect(() => {
+		async function fetchPosts() {
+			const nextURL: string = `http://localhost:3000/api/feed?userId=${userid.account_info}&xPosts=3&pageNum=0`;
+			const data = await axios.get(nextURL).then((res) => res.data);
+			console.log(data);
+			setFeedData(data);
+		}
+		fetchPosts();
+	}, [userid]);
 	return (
 		<div className="flex flex-row min-h-screen min-w-screen">
 			<MenuBar2 />
@@ -62,20 +77,21 @@ export default function Feed() {
 				</label>
 			</div> */}
 			<div>
-				{postMockData.map((post) => (
-					<Post
-						username={post.username}
-						title={post.title}
-						description={post.description}
-						img={post.image_url}
-					/>
-				))}
 				<Post
 					username={defaultUsername}
 					title={defaultTitle}
 					description={defaultDesc}
 					img={defaultImg}
 				/>
+				{feedData.map((post) => (
+					<Post
+						key={post.username}
+						username={post.username}
+						title={post.title}
+						description={post.description}
+						img={post.image_url}
+					/>
+				))}
 			</div>
 		</div>
 	);
