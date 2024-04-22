@@ -26,6 +26,10 @@ const router = createBrowserRouter([
 		path: "friends",
 		element: <Feed />
 	},
+	{
+		path: "feed",
+		element: <Feed />
+	},
 
 	{
 		path: "trending",
