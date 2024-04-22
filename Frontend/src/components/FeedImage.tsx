@@ -3,7 +3,6 @@ import spotifyLogo from "../assets/spotify_logo.png"
 export default function FeedImage() {
     const imageUrl = "https://images.pexels.com/photos/17731677/pexels-photo-17731677/free-photo-of-a-red-parachute-flying-through-the-air-in-a-blue-sky.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load"
 	return (
-		<div className="temp-feed-view h-full overflow-y-scroll w-full flex justify-center">
 			<div className="image-view relative w-3/5">
 				<img
 					src={imageUrl}
@@ -16,6 +15,5 @@ export default function FeedImage() {
                     </button>
                 </a>
 			</div>
-		</div>
 	);
 }
