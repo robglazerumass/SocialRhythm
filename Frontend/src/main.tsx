@@ -9,6 +9,7 @@ import {
 import Login from "./page/Login.tsx";
 import SignUp from "./page/SignUp.tsx";
 import Feed from "./page/Feed.tsx";
+import MenuBar from "./components/menubar.tsx";
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "feed",
-		element: <Feed />
+		element: <Feed/>
 	},
 
 	{

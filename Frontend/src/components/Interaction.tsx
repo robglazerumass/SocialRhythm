@@ -1,8 +1,6 @@
 import React from 'react'
 import { HandThumbUpIcon, HandThumbDownIcon, ChatBubbleOvalLeftIcon } from '@heroicons/react/24/outline'
 
-
-
 export default function Interaction() {
   return (
     <div className='interaction-row flex flex-row justify-between w-3/5 py-6'>

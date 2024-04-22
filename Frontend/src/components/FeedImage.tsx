@@ -3,7 +3,7 @@ import spotifyLogo from "../assets/spotify_logo.png"
 export default function FeedImage() {
     const imageUrl = "https://images.pexels.com/photos/17731677/pexels-photo-17731677/free-photo-of-a-red-parachute-flying-through-the-air-in-a-blue-sky.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load"
 	return (
-			<div className="image-view relative w-3/5">
+			<div className="image-view relative w-3/5 -z-10">
 				<img
 					src={imageUrl}
 					className="post-image aspect-square"
