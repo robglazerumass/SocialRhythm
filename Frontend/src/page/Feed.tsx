@@ -37,7 +37,7 @@ function Post({
 					<p>{description}</p>
 				</div>
 			</div>
-			<div className="temp-feed-view h-full overflow-y-scroll w-full flex flex-col items-center box-border">
+			<div className="temp-feed-view h-full overflow-y-visible w-full flex flex-col items-center box-border">
 				<FeedImage />
 				<Interaction />
 			</div>
@@ -46,12 +46,11 @@ function Post({
 }
 
 export default function Feed() {
-	const defaultUsername = "alice123";
-	const defaultTitle = "New Album!";
+	const defaultUsername = "jane123";
+	const defaultTitle = "OMG it's here!";
 	const defaultImg =
 		"https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
-	const defaultDesc =
-		"Excited for the new album release from my favorite artist!";
+	const defaultDesc = "I can't believe that it's here!";
 	const [feedData, setFeedData] = useState(postMockData);
 	const { state } = useLocation();
 	const { userid } = state;
@@ -76,7 +75,7 @@ export default function Feed() {
 					Menu
 				</label>
 			</div> */}
-			<div>
+			<div className="flex flex-col justify-center">
 				<Post
 					username={defaultUsername}
 					title={defaultTitle}

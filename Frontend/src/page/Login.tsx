@@ -2,6 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import signup_img from "../assets/signup_img.jpg";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+// minified version is also included
+// import 'react-toastify/dist/ReactToastify.min.css';
 
 function Login() {
 	const [loginForm, setLoginForm] = useState({ username: "", password: "" });
@@ -13,6 +18,9 @@ function Login() {
 	// 		"Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
 	// 	},
 	// };
+	const errorNotify = (message: string) => {
+		toast(message);
+	};
 	const handleShowPassword = () => {
 		if (!showPassword) setShowPassword(true);
 		else setShowPassword(false);
@@ -24,11 +32,16 @@ function Login() {
 	};
 
 	const handleSubmit = async (event: { preventDefault: () => void }) => {
-		event.preventDefault();
-		const url = `http://localhost:3000/api/login?username=${loginForm.username}&password=${loginForm.password}`;
-		const data = await axios.get(url).then((res) => res.data);
-		console.log(data);
-		navigate("/feed", {state: {userid: data}});
+		try {
+			event.preventDefault();
+			const url = `http://localhost:3000/api/login?username=${loginForm.username}&password=${loginForm.password}`;
+			const data = await axios.get(url).then((res) => res.data);
+			console.log(data);
+			navigate("/feed", { state: { userid: data } });
+		} catch (err: unknown) {
+			errorNotify(err as string);
+			throw new Error(err as string);
+		}
 	};
 
 	return (
