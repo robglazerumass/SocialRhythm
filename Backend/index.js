@@ -113,33 +113,41 @@ app.get('/api/feed', async (req, res, next) => {
     }
 })
 
-//Add friend : {username, friendUsername}
+//follow : {username, followUsername}
 // takes in a query with above fields and returns a JSON Success or throws a Backend Error
-app.get('/api/addfriend', async (req, res, next) => {
+app.post('/api/follow', async (req, res, next) => {
     try {
-        let { username, friendUsername } = req.query;
-        if (!isValidQuery([username, friendUsername]))
+        const { username, followUsername } = req.query;
+        if (!username || !followUsername) {
             throw BackendErrorType.INVALID_QUERY;
+        }
 
-        if (username === friendUsername)
-            throw BackendErrorType.SELF_ADD;
+        if (username === followUsername) {
+            throw BackendErrorType.SELF_FOLLOW;
+        }
 
-        const user = await UserData.findOne({ username });
-        const friend = await UserData.findOne({ username: friendUsername });
+        const follower = await UserData.findOne({ username: username });
+        const followee = await UserData.findOne({ username: followUsername });
 
-        if (!friend)
-            throw BackendErrorType.FRIEND_NOT_FOUND;
+        if (!follower) {
+            throw BackendErrorType.USER_DNE;
+        }
 
-        if (user.user_friends_list.includes(friend._id))
-            throw BackendErrorType.ALREADY_FRIENDS;
+        if (!followee) {
+            throw BackendErrorType.FOLLOW_DNE;
+        }
 
-        user.user_friends_list.push(friend._id);
-        await user.save();
+        if (follower.user_following_list.includes(followee._id)) {
+            throw BackendErrorType.ALREADY_FOLLOWING;
+        }   
 
-        const responseData = { result: 'SUCCESS', message: 'Friend added successfully' };
-        res.json(responseData);
-
-    } catch (error) {
+        follower.user_following_list.push(followee._id);
+        followee.user_follower_list.push(follower._id);
+        await follower.save();
+        await followee.save();
+        res.json({ message: 'Successfully followed user.' });
+    } 
+    catch (error) {
         next(error);
     }
 });
