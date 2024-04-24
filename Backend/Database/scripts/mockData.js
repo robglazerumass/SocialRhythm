@@ -129,20 +129,20 @@ userData.deleteMany({});
 userData.insertMany(userMockData);
 
 function addFollower(follower, following) {
-    if (follower._id === following._id)
+    if (follower.username == following.username)
         return;
     // Update follower's following list
     userData.updateOne(
         { _id: follower._id },
         {
-            $push: { user_following_list: following._id }
+            $push: { user_following_list: following.username }
         }
     );
     // Update following's follower list
     userData.updateOne(
         { _id: following._id },
         {
-            $push: { user_follower_list: following._id }
+            $push: { user_follower_list: follower.username }
         }
     );
 }
