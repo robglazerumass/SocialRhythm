@@ -2,14 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import {
-	createBrowserRouter,
-	RouterProvider
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./page/Login.tsx";
 import SignUp from "./page/SignUp.tsx";
 import Feed from "./page/Feed.tsx";
 import MenuBar from "./components/menubar.tsx";
+import { ToastContainer, Bounce } from "react-toastify";
+
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -21,26 +20,38 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "signup",
-		element: <SignUp />
+		element: <SignUp />,
 	},
 	{
 		path: "friends",
-		element: <Feed />
+		element: <Feed />,
 	},
 	{
 		path: "feed",
-		element: <Feed/>
+		element: <Feed />,
 	},
 
 	{
 		path: "trending",
-		element: <Feed />
-	}
-	
+		element: <Feed />,
+	},
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<RouterProvider router={router} />
+		<ToastContainer
+			position="top-right"
+			autoClose={5000}
+			hideProgressBar={false}
+			newestOnTop={false}
+			closeOnClick
+			rtl={false}
+			pauseOnFocusLoss
+			draggable
+			pauseOnHover
+			theme="light"
+			transition={Bounce}
+		/>
 	</React.StrictMode>
 );
