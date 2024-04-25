@@ -118,7 +118,7 @@ app.get('/api/feed', async (req, res, next) => {
 app.post('/api/follow', async (req, res, next) => {
     try {
         const { username, followUsername } = req.query;
-        if (!username || !followUsername) {
+        if (!isValidQuery([username, friendUsername])) {
             throw BackendErrorType.INVALID_QUERY;
         }
 
