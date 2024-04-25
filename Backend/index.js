@@ -148,66 +148,43 @@ app.get('/api/profile', async (req, res, next) => {
     }
 })
 
-//Add friend : {username, friendUsername}
+//follow : {username, userToFollow}
 // takes in a query with above fields and returns a JSON Success or throws a Backend Error
-app.get('/api/addfriend', async (req, res, next) => {
+app.post('/api/follow', async (req, res, next) => {
     try {
-        let { username, friendUsername } = req.query;
-        if (!isValidQuery([username, friendUsername]))
+        let { username, userToFollow } = req.query;
+
+        if (!isValidQuery([username, userToFollow])) {
             throw BackendErrorType.INVALID_QUERY;
-
-        if (username === friendUsername)
-            throw BackendErrorType.SELF_ADD;
-
-        const user = await UserData.findOne({ username });
-        const friend = await UserData.findOne({ username: friendUsername });
-
-        if (!friend)
-            throw BackendErrorType.FRIEND_NOT_FOUND;
-
-        if (user.user_friends_list.includes(friend._id))
-            throw BackendErrorType.ALREADY_FRIENDS;
-
-        user.user_friends_list.push(friend._id);
-        await user.save();
-
-        const responseData = { result: 'SUCCESS', message: 'Friend added successfully' };
-        res.json(responseData);
-
-    } catch (error) {
-        next(error);
-    }
-});
-
-// Create post query fields: { userId, username, title, description, spotifyLink, imageUrl }
-// takes in a query with above fields and returns a JSON Success or throws a Backend Error
-app.post('/api/createpost', async (req, res, next) => {
-    try {
-        let { userId, username, title, description, spotifyLink, imageUrl } = req.body;
-
-        if (!userId || !username || !title || !description) {
-            throw BackendErrorType.MISSING_FIELDS;
         }
 
-        const newPost = new PostData({
-            user_id: userId,
-            username: username,
-            title: title,
-            description: description,
-            spotify_link: spotifyLink || '',
-            image_url: imageUrl || '',
-            likes_list: [],
-            dislikes_list: [],
-            comments_list: []
-        });
+        if (username === userToFollow) {
+            throw BackendErrorType.SELF_FOLLOW;
+        }
 
-        await newPost.save();
-        res.json({ result: 'SUCCESS', message: 'Post created successfully', postId: newPost._id });
+        const user = await UserData.findOne({ username: username });
+        const targetUser = await UserData.findOne({ username: userToFollow });
 
+        if (!user || !targetUser) {
+            throw BackendErrorType.USER_DNE;
+        }
+
+        if (user.user_following_list.includes(userToFollow)) {
+            throw BackendErrorType.ALREADY_FOLLOWING;
+        }
+
+        user.user_following_list.push(userToFollow);
+        await user.save();
+
+        targetUser.user_follower_list.push(username);
+        await targetUser.save();
+
+        res.json({ message: `You are now following ${userToFollow}` });
     } catch (error) {
         next(error);
     }
 });
+
 
 // Handles errors thrown to Express
 app.use((error, req, res, next) => {
