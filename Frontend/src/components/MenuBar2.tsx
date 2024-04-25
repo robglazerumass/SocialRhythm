@@ -13,7 +13,7 @@ function MenuItems({ icon, name }: { icon: ReactNode; name: string }) {
 
 function MenuBar2() {
 	return (
-		<div className="fixed top-0 left-0 lg:w-64 h-screen">
+		<div className="sticky top-0 left-0 lg:w-64 h-screen">
 			<ul className="menu bg-base-200 w-full h-full flex justify-around">
 				<div>
 					<MenuItems

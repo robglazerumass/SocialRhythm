@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import signup_img from "../assets/signup_img.jpg";
 import { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 export default function SignUp() {
 	const [signupForm, setSignupForm] = useState({

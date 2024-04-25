@@ -34,7 +34,7 @@ function Post({
 				</div>
 				<div className="flex flex-col gap-4">
 					<p className="font-extrabold text-3xl">{title}</p>
-					<p>{description}</p>
+					<p className="max-w-full flex flex-wrap">{description}</p>
 				</div>
 			</div>
 			<div className="temp-feed-view h-full overflow-y-visible w-full flex flex-col items-center box-border">
@@ -50,7 +50,8 @@ export default function Feed() {
 	const defaultTitle = "OMG it's here!";
 	const defaultImg =
 		"https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
-	const defaultDesc = "I can't believe that it's here!";
+	const defaultDesc =
+		"I can't believe that it's here! ljdaskljfkldsajf;sdadsjf;sldajfkl;sdajfkdsjfklasdjflkjdsaklfjdsljfklsdajfklsdajfklsdjafk;ldsjfkl;sdjafkljsadfkljsdflkjsdalkfjklsdajflk;dsajf";
 	const [feedData, setFeedData] = useState(postMockData);
 	const { state } = useLocation();
 	const { userid } = state;
