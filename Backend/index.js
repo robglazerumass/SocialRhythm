@@ -113,6 +113,41 @@ app.get('/api/feed', async (req, res, next) => {
     }
 })
 
+// feed fields: { username }
+// returns the profile of the account with this username
+app.get('/api/profile', async (req, res, next) => {
+    try{
+        const query = req.query
+        if (!isValidQuery([query.username]))
+            throw BackendErrorType.INVALID_QUERY
+
+        let user = await UserData.findOne({ username: query.username })
+        
+        if(user === null || user === undefined)
+            throw BackendErrorType.USER_DNE
+
+        // need to return a JSON with user profile information along with the list of posts by this user
+
+        let postList = await PostData.find({ username: query.username })
+
+        let result = {
+            user_first_name: user["user_first_name"],
+            user_last_name: user["user_last_name"],
+            user_email: user["user_email"],
+            username: user["username"],
+            user_bio: user["user_bio"],
+            user_following_list: user["user_following_list"], 
+            user_follower_list: user["user_follower_list"],
+            user_post_list: postList,
+        } 
+
+        res.json(result)
+    }
+    catch (error){
+        next(error)
+    }
+})
+
 //follow : {username, userToFollow}
 // takes in a query with above fields and returns a JSON Success or throws a Backend Error
 app.post('/api/follow', async (req, res, next) => {
