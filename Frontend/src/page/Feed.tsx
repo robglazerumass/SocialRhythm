@@ -7,6 +7,7 @@ import postMockData from "../mockData/postMockData";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import createPostForm from "../components/createPostForm";
 
 function Post({
 	username,
@@ -66,7 +67,7 @@ export default function Feed() {
 	}, [userid]);
 	return (
 		<div className="flex flex-row min-h-screen min-w-screen">
-			<MenuBar2 />
+			<MenuBar2 createPostForm={createPostForm()} />
 			{/* <MenuBar /> */}
 			{/* Add other components like title and description into the div below*/}
 			{/* <MenuBar />
