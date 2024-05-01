@@ -2,17 +2,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import signup_img from "../assets/signup_img.jpg";
+import { toast, Bounce } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+// minified version is also included
+// import 'react-toastify/dist/ReactToastify.min.css';
 
 function Login() {
 	const [loginForm, setLoginForm] = useState({ username: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
-	// const config = {
-	// 	headers: {
-	// 		"Access-Control-Allow-Origin": "*",
-	// 		"Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-	// 	},
-	// };
+	const errorNotify = (message: string) => {
+		toast(message, {
+			type: "error",
+			position: "top-right",
+			autoClose: 5000,
+			hideProgressBar: true,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+			theme: "light",
+			transition: Bounce,
+		});
+	};
+
 	const handleShowPassword = () => {
 		if (!showPassword) setShowPassword(true);
 		else setShowPassword(false);
@@ -26,9 +40,15 @@ function Login() {
 	const handleSubmit = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
 		const url = `http://localhost:3000/api/login?username=${loginForm.username}&password=${loginForm.password}`;
-		const data = await axios.get(url).then((res) => res.data);
-		console.log(data);
-		navigate("/feed", {state: {userid: data}});
+		const data = await axios
+			.get(url)
+			.then((res) => {
+				return res.data;
+			})
+			.catch((err) => errorNotify(err.response.data));
+		if (data.result == "SUCCESS") {
+			navigate("/feed", { state: { userid: data } });
+		}
 	};
 
 	return (
@@ -75,6 +95,7 @@ function Login() {
 										/>
 										<button
 											className="btn btn-link border-transparent focus:outline-none"
+											type="button"
 											onClick={handleShowPassword}>
 											{showPassword ? (
 												<svg

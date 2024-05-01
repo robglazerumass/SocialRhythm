@@ -3,7 +3,8 @@ import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
 import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
-import { ObjectId } from "mongodb";
+import {ObjectId} from "mongodb";
+import bodyParser from 'body-parser';
 
 const app = express();
 app.use(cors());
@@ -275,6 +276,40 @@ app.get("/api/search", async (req, res, next) => {
         }
 
         res.json(result);
+
+// Create Post body fields: { username, title, description, spotify_link(OPTIONAL), image_url(OPTIONAL) }
+// takes in a request body with above fields and returns a JSON Success or throws a Backend Error
+app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
+    try {
+        let body = req.body;
+        if(!isValidQuery([body.username, body.title, body.description]))
+            throw BackendErrorType.MISSING_FIELDS;
+
+        if(!body.title || !body.description)
+            throw BackendErrorType.NO_TITLE_OR_DESC;
+
+        let user = await UserData.findOne({ username: body.username });
+
+        if (user == null)
+            throw BackendErrorType.USER_DNE;
+
+        const post = await PostData.create({
+            username: body.username,
+            title: body.title,
+            description: body.description,
+            spotify_link: body.spotify_link || '',
+            image_url: body.image_url || '',
+            likes_list: [],
+            dislikes_list: [],
+            comments_list: [],
+            date_created: new Date(),
+        });
+
+        user.user_post_list.push(post._id);
+        await user.save();
+
+        const responseData = { result: 'SUCCESS', message: 'New Post Created' };
+        res.json(responseData);
 
     } catch (error) {
         next(error);
