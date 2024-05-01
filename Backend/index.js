@@ -276,6 +276,10 @@ app.get("/api/search", async (req, res, next) => {
         }
 
         res.json(result);
+    } catch (error){
+        next(error);
+    }
+});
 
 // Create Post body fields: { username, title, description, spotify_link(OPTIONAL), image_url(OPTIONAL) }
 // takes in a request body with above fields and returns a JSON Success or throws a Backend Error
