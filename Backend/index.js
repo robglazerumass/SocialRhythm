@@ -320,6 +320,17 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
     }
 });
 
+
+
+app.post('/api/createComment', async(req, res, next) =>{
+
+})
+
+app.get('/api/getComments', async(req, res, next) => {
+    
+})
+
+
 // Handles errors thrown to Express
 app.use((error, req, res, next) => {
     const msg = error.message !== undefined ? error.message : "Something went wrong.";
