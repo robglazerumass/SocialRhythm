@@ -5,6 +5,7 @@ import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js
 import { BackendErrorType } from "./BackendError.js";
 import {ObjectId} from "mongodb";
 import bodyParser from 'body-parser';
+import { searchSpotify } from "./spotify.js";
 
 const app = express();
 app.use(cors());
@@ -277,6 +278,27 @@ app.get("/api/search", async (req, res, next) => {
 
         res.json(result);
     } catch (error){
+        next(error);
+    }
+});
+
+/**
+ * Search query field: { searchTerm, type, limit }. Where 'searchTerm' is a string, 'type' is a comma-separated
+ * list of strings, and 'limit' is an integer. Defaults to { "tag:new", "album,artist,track", 10 }
+ * 
+ * Uses the Spotify API to search music content. The returned object is complex and should be studied at
+ * https://developer.spotify.com/documentation/web-api/ under 'Reference/*'. It will contain name, images,
+ * and other needed basic info. 
+ */
+app.get("/api/searchContent", async (req, res, next) => {
+    try {
+        const query = req.query;
+        const search = query.searchTerm ?? "taylor swift";
+        const types = query.type ?? "album,artist,track";
+        const limit = query.limit ?? 10;
+        let data = await searchSpotify(search, types, limit);
+        res.json(data);
+    } catch (error) {
         next(error);
     }
 });
