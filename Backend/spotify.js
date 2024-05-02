@@ -50,12 +50,48 @@ export async function searchSpotify(query, types, limit) {
         method: "GET",
         headers: { "Authorization": `Bearer ${token.access_token}` }
     }).then(res => res.json());
-
+    
     // Handle expired token
     if (response.status === 401) {
         getToken();
         return searchSpotify(query, types, limit);
     }
-    
+
+    response.albums?.items?.forEach(cleanAlbum);
+    response.artists?.items?.forEach(cleanArtist);
+    response.tracks?.items?.forEach(cleanTrack);
+
     return response;
+}
+
+// Helper functions to prune unnecessary data
+
+async function cleanAlbum(album) {
+    var prop = ['artists', 'external_urls', 'images', 'name', 'release_date', 'total_tracks', 'type'];
+    for (var k in album) {
+        if (prop.indexOf(k) < 0) {
+            delete album[k];
+        }
+    }
+    album.artists.forEach(cleanArtist)
+}
+
+async function cleanArtist(artist) {
+    var prop = ['genres', 'external_urls', 'images', 'name', 'popularity', 'type'];
+    for (var k in artist) {
+        if (prop.indexOf(k) < 0) {
+            delete artist[k];
+        }
+    }
+}
+
+async function cleanTrack(track) {
+    var prop = ['album', 'artists', 'duration_ms', 'explicit', 'external_urls', 'name', "popularity", "preview_url", "type"];
+    for (var k in track) {
+        if (prop.indexOf(k) < 0) {
+            delete track[k];
+        }
+    }
+    cleanAlbum(track.album);
+    track.artists.forEach(cleanArtist);
 }

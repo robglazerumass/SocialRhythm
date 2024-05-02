@@ -283,20 +283,30 @@ app.get("/api/search", async (req, res, next) => {
 });
 
 /**
- * Search query field: { searchTerm, type, limit }. Where 'searchTerm' is a string, 'type' is a comma-separated
- * list of strings, and 'limit' is an integer. Defaults to { "tag:new", "album,artist,track", 10 }
+ * Search query field: { searchTerm, type, limit }. Where 'searchTerm' is a string, 'type' is a 
+ * comma-separated list of strings, and 'limit' is an integer. Defaults to 
+ * { "tag:new", "album,artist,track", 10 }
  * 
- * Uses the Spotify API to search music content. The returned object is complex and should be studied at
- * https://developer.spotify.com/documentation/web-api/ under 'Reference/*'. It will contain name, images,
- * and other needed basic info. 
+ * Uses the Spotify API to search music content. The full content of the object can be seen at
+ * https://developer.spotify.com/documentation/web-api/. 
+ * 
+ * Items of each type are pruned to only contain as follows:
+ * 
+ * albums:
+ *      type flag, artists, spotify link, images, name, release date, number of songs
+ * artists:
+ *      type flag, genres, spotify link, images, name, popularity 0-100
+ * tracks:
+ *      type flag, album, artists, duration (ms), explicit, spotify link, name, 
+ *      popularity 0-100, audio preview link
  */
 app.get("/api/searchContent", async (req, res, next) => {
     try {
         const query = req.query;
-        const search = query.searchTerm ?? "taylor swift";
+        const search = query.searchTerm ?? "tag:new";
         const types = query.type ?? "album,artist,track";
         const limit = query.limit ?? 10;
-        let data = await searchSpotify(search, types, limit);
+        let data = await searchSpotify(search.length === 0 ? "tag:new" : search, types, limit);
         res.json(data);
     } catch (error) {
         next(error);
