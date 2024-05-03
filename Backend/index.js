@@ -362,8 +362,31 @@ app.post('/api/createComment', async(req, res, next) =>{
     }
 })
 
+// getComments query fields { postId }
 app.get('/api/getComments', async(req, res, next) => {
-    
+    try{
+        let query = req.query
+
+        if(!isValidQuery([query.postId]))
+            throw BackendErrorType.INVALID_QUERY
+
+        let post = await PostData.findOne({ _id : query.postId })
+
+        if(post === null || post === undefined)
+            throw BackendErrorType.POST_DNE
+        
+        let comments = await CommentData.find({ post_id : query.postId })
+            .sort({ date_created: 1 })
+
+        res.json(comments)
+    }
+    catch(error){
+        if (error.name === 'CastError') {
+            next(BackendErrorType.POST_DNE)
+        } else {
+            next(error); 
+        }
+    }
 })
 
 
