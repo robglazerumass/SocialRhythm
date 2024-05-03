@@ -321,9 +321,45 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
 });
 
 
-
+// createComment query fields { username, postId, commentString }
 app.post('/api/createComment', async(req, res, next) =>{
+    try {
+        let query = req.query
 
+        if(!isValidQuery([query.username, query.postId, query.commentString]))
+            throw BackendErrorType.INVALID_QUERY
+
+        // get the user
+        let user = await UserData.findOne({ username: query.username })
+
+        if (user === null || user === undefined)
+            throw BackendErrorType.USER_DNE
+
+        // get the post
+        let post = await PostData.findOne({ _id : query.postId })
+
+        if (post === null || post === undefined)
+            throw BackendErrorType.POST_DNE
+        
+        // create a new comment
+        let comment = await CommentData.create({
+            post_id: query.postId,
+            username: query.username,
+            comment_string: query.commentString,
+            comment_like_list: [],
+            comment_dislike_list: [],
+            date_created: new Date(),
+        })
+
+        // add comment to post
+        post.comments_list.push(comment._id)
+        await post.save()
+
+        res.json({ result: 'Success', message: 'Comment Created' })
+    }
+    catch (error){
+        next(error)
+    }
 })
 
 app.get('/api/getComments', async(req, res, next) => {
