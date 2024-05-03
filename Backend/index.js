@@ -357,9 +357,14 @@ app.post('/api/createComment', async(req, res, next) =>{
 
         res.json({ result: 'Success', message: 'Comment Created' })
     }
-    catch (error){
-        next(error)
+    catch(error){
+        if (error.name === 'CastError') {
+            next(BackendErrorType.POST_DNE)
+        } else {
+            next(error); 
+        }
     }
+
 })
 
 // getComments query fields { postId }
