@@ -64,48 +64,39 @@ export default function Feed() {
 		fetchPosts();
 	}, [userid]);
 	return (
-		<div className="homepage relative flex flex-row">
+		<div className="homepage inline-flex flex-row">
 			<MenuBar2 createPostForm={createPostForm()} />
-			{/* <MenuBar /> */}
-			{/* Add other components like title and description into the div below*/}
-			{/* <MenuBar />
-			<div className="menu-icon fixed top-4 left-4">
-				<label htmlFor="my-drawer-2" className="btn btn-primary drawer-button">
-					<Bars3Icon className="h-6" />
-					Menu
-				</label>
-			</div> */}
-			<button
-				className="btn shadow-none justify-start gap-7 absolute right-10 bottom-10"
-				onClick={() =>
-					document.getElementById("create_post_modal").showModal()
-				}>
-				{/* <a
+			<div className="feed-container flex flex-col grow justify-center h-full w-full overflow-hidden">
+				<button
+					className="btn shadow-none justify-start gap-7 fixed right-10 bottom-10"
+					onClick={() =>
+						document.getElementById("create_post_modal").showModal()
+					}>
+					{/* <a
 							className="flex justify-start gap-7 text-black"
 							// onClick={() =>
 							// 	document.getElementById("create_post_modal").showModal()
 							// }
 						> */}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					strokeWidth={1.5}
-					stroke="currentColor"
-					className="w-6 h-6">
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-					/>
-				</svg>
-				Create Post
-				{/* </a> */}
-				<dialog id="create_post_modal" className="modal">
-					{createPostForm()}
-				</dialog>
-			</button>
-			<div className="feed-container relative flex flex-col justify-center h-screen w-screen overflow-y-scroll">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						strokeWidth={1.5}
+						stroke="currentColor"
+						className="w-6 h-6">
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+						/>
+					</svg>
+					Create Post
+					{/* </a> */}
+					<dialog id="create_post_modal" className="modal">
+						{createPostForm()}
+					</dialog>
+				</button>
 				<Post
 					username={defaultUsername}
 					title={defaultTitle}

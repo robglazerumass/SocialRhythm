@@ -13,7 +13,7 @@ function MenuItems({ icon, name }: { icon: ReactNode; name: string }) {
 
 function MenuBar2({ createPostForm }: { createPostForm: JSX.Element }) {
 	return (
-		<div className="sticky top-0 left-0 lg:w-64 h-screen">
+		<div className="sticky top-0 left-0 lg:w-64 h-screen overflow-x-hidden overflow-y-visible">
 			<ul className="menu bg-base-200 w-full h-full flex justify-around">
 				<div>
 					<MenuItems
