@@ -5,6 +5,7 @@ import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js
 import { BackendErrorType } from "./BackendError.js";
 import {ObjectId} from "mongodb";
 import bodyParser from 'body-parser';
+import { searchSpotify } from "./spotify.js";
 
 const app = express();
 app.use(cors());
@@ -277,6 +278,37 @@ app.get("/api/search", async (req, res, next) => {
 
         res.json(result);
     } catch (error){
+        next(error);
+    }
+});
+
+/**
+ * Search query field: { searchTerm, type, limit }. Where 'searchTerm' is a string, 'type' is a 
+ * comma-separated list of strings, and 'limit' is an integer. Defaults to 
+ * { "tag:new", "album,artist,track", 10 }
+ * 
+ * Uses the Spotify API to search music content. The full content of the object can be seen at
+ * https://developer.spotify.com/documentation/web-api/. 
+ * 
+ * Items of each type are pruned to only contain as follows:
+ * 
+ * albums:
+ *      type flag, artists, spotify link, images, name, release date, number of songs
+ * artists:
+ *      type flag, genres, spotify link, images, name, popularity 0-100
+ * tracks:
+ *      type flag, album, artists, duration (ms), explicit, spotify link, name, 
+ *      popularity 0-100, audio preview link
+ */
+app.get("/api/searchContent", async (req, res, next) => {
+    try {
+        const query = req.query;
+        const search = query.searchTerm ?? "tag:new";
+        const types = query.type ?? "album,artist,track";
+        const limit = query.limit ?? 10;
+        let data = await searchSpotify(search.length === 0 ? "tag:new" : search, types, limit);
+        res.json(data);
+    } catch (error) {
         next(error);
     }
 });
