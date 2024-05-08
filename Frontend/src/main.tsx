@@ -6,7 +6,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./page/Login.tsx";
 import SignUp from "./page/SignUp.tsx";
 import Feed from "./page/Feed.tsx";
-import MenuBar from "./components/menubar.tsx";
 import { ToastContainer, Bounce } from "react-toastify";
 import Profile from "./page/Profile.tsx";
 

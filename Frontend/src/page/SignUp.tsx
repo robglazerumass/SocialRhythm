@@ -28,7 +28,7 @@ export default function SignUp() {
 		}
 	};
 	return (
-		<div className="flex items-center justify-center">
+		<div className="flex items-center justify-center h-screen">
 			<div className="flex flex-row bg-base-100 w-full shadow-xl h-5/6 lg:w-5/6 rounded-lg">
 				<div className="flex w-0 lg:w-3/5">
 					<img
