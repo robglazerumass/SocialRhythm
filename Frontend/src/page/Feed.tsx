@@ -53,16 +53,16 @@ export default function Feed() {
 		"I can't believe that it's here! ljdaskljfkldsajf;sdadsjf;sldajfkl;sdajfkdsjfklasdjflkjdsaklfjdsljfklsdajfklsdajfklsdjafk;ldsjfkl;sdjafkljsadfkljsdflkjsdalkfjklsdajflk;dsajf";
 	const [feedData, setFeedData] = useState(postMockData);
 	const { state } = useLocation();
-	const { userid } = state;
+	const { username } = state;
 	useEffect(() => {
 		async function fetchPosts() {
-			const nextURL: string = `http://localhost:3000/api/feed?userId=${userid.account_info}&xPosts=3&pageNum=0`;
+			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
 			console.log(data);
 			setFeedData(data);
 		}
 		fetchPosts();
-	}, [userid]);
+	}, [username]);
 	return (
 		<div className="homepage inline-flex flex-row">
 			<MenuBar2 createPostForm={createPostForm()} />
@@ -93,10 +93,10 @@ export default function Feed() {
 					</svg>
 					Create Post
 					{/* </a> */}
-					<dialog id="create_post_modal" className="modal">
-						{createPostForm()}
-					</dialog>
 				</button>
+				<dialog id="create_post_modal" className="modal">
+					{createPostForm()}
+				</dialog>
 				<Post
 					username={defaultUsername}
 					title={defaultTitle}

@@ -8,6 +8,7 @@ import SignUp from "./page/SignUp.tsx";
 import Feed from "./page/Feed.tsx";
 import MenuBar from "./components/menubar.tsx";
 import { ToastContainer, Bounce } from "react-toastify";
+import Profile from "./page/Profile.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -30,10 +31,9 @@ const router = createBrowserRouter([
 		path: "feed",
 		element: <Feed />,
 	},
-
 	{
-		path: "trending",
-		element: <Feed />,
+		path: "/user/:username",
+		element: <Profile />,
 	},
 ]);
 

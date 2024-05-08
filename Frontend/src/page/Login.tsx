@@ -45,9 +45,13 @@ function Login() {
 			.then((res) => {
 				return res.data;
 			})
+			.then((data) => {
+				console.log(data);
+				return data;
+			})
 			.catch((err) => errorNotify(err.response.data));
 		if (data.result == "SUCCESS") {
-			navigate("/feed", { state: { userid: data } });
+			navigate("/feed", { state: { username: loginForm.username } });
 		}
 	};
 
