@@ -3,7 +3,7 @@ import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
 import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
-import {ObjectId} from "mongodb";
+import { ObjectId } from "mongodb";
 import bodyParser from 'body-parser';
 
 const app = express();
@@ -19,6 +19,18 @@ app.get("/", (request, response) => {
 // checks if any query field you are expecting is undefined
 function isValidQuery(queryList) {
     return queryList.every(field => field !== undefined);
+}
+
+function validateRating(user, post, ratingType) {
+    let likes = post.likes_list;
+    let dislikes = post.dislikes_list;
+
+    if (likes.includes(user.username) || dislikes.includes(user.username)) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 
@@ -194,7 +206,7 @@ app.post('/api/follow', async (req, res, next) => {
 app.get("/api/search", async (req, res, next) => {
     try {
         let query = req.query;
-  
+
         //Validate the query
         if (!isValidQuery([query.searchTerm]))
             throw BackendErrorType.INVALID_QUERY;
@@ -276,7 +288,7 @@ app.get("/api/search", async (req, res, next) => {
         }
 
         res.json(result);
-    } catch (error){
+    } catch (error) {
         next(error);
     }
 });
@@ -286,10 +298,10 @@ app.get("/api/search", async (req, res, next) => {
 app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
     try {
         let body = req.body;
-        if(!isValidQuery([body.username, body.title, body.description]))
+        if (!isValidQuery([body.username, body.title, body.description]))
             throw BackendErrorType.MISSING_FIELDS;
 
-        if(!body.title || !body.description)
+        if (!body.title || !body.description)
             throw BackendErrorType.NO_TITLE_OR_DESC;
 
         let user = await UserData.findOne({ username: body.username });
@@ -314,6 +326,88 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
 
         const responseData = { result: 'SUCCESS', message: 'New Post Created' };
         res.json(responseData);
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+//Rating query terms: { requestType, ratingDest, ratingType, username, destId }
+// Takes in a request with above fields and adds or removes a like or dislike from 
+// a post.
+app.post("/api/Rating", async (req, res, next) => {
+    try {
+        let query = req.query;
+        let result, user, dest, likes, dislikes;
+
+        if (!isValidQuery([query.requestType, query.ratingDest, query.ratingType, query.username, query.destId]))
+            throw BackendErrorType.MISSING_FIELDS;
+
+        user = await UserData.findOne({ username: query.username });
+
+        if(query.ratingDest == "post"){
+            try {
+                dest = await PostData.findOne({ _id: query.destId });
+            }
+            catch (error) {
+                throw BackendErrorType.POST_DNE;
+            }
+
+            if (dest == null)
+                throw BackendErrorType.POST_DNE;
+
+        }else if(query.ratingDest == "comment"){
+            try {
+                dest = await CommentData.findOne({ _id: query.destId });
+            }
+            catch (error) {
+                throw BackendErrorType.COMMENT_DNE;
+            }
+
+            if (dest == null)
+                throw BackendErrorType.COMMENT_DNE;
+        }else{
+            throw BackendErrorType.INVALID_QUERY;
+        }
+
+        likes = dest.likes_list;
+        dislikes = dest.dislikes_list;
+
+        if (user == null)
+            throw BackendErrorType.USER_DNE;
+
+        if (query.requestType == "add") {
+            if (query.ratingType == "like" && !(likes.includes(user.username) || dislikes.includes(user.username))) {
+                likes.push(user.username);
+                await dest.save();
+            }
+            else if (query.ratingType == "dislike" && !(likes.includes(user.username) || dislikes.includes(user.username))) {
+                dislikes.push(user.username);
+                await dest.save();
+            }
+            else {
+                throw BackendErrorType.INVALID_QUERY;
+            }
+        }
+        else if (query.requestType == "remove") {
+            if (query.ratingType == "like" && likes.includes(user.username)) {
+                likes.pull(user.username);
+                await dest.save();
+            }
+            else if (query.ratingType == "dislike" && dislikes.includes(user.username)) {
+                dislikes.pull(user.username);
+                await dest.save();
+            }
+            else {
+                throw BackendErrorType.INVALID_QUERY;
+            }
+        }
+        else {
+            throw BackendErrorType.INVALID_QUERY;
+        }
+
+        result = { result: 'SUCCESS' };
+        res.json(result);
 
     } catch (error) {
         next(error);
