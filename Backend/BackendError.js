@@ -23,5 +23,6 @@ export const BackendErrorType = Object.freeze({
     USER_DNE: new BackendError(711, "User Does Not Exist."),
     INVALID_FEED_PAGE: new BackendError(712, "This is an invalid page number for feed."),
     NO_TITLE_OR_DESC: new BackendError(713, "Your post is missing a title and/or a description"),
-    USER_NOT_FOUND: new BackendError(714, "User was not found.")
+    USER_NOT_FOUND: new BackendError(714, "User was not found."),
+    POST_DNE: new BackendError(715, "The post you are requesting does not exist"),
 });
