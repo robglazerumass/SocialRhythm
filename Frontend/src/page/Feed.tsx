@@ -19,11 +19,11 @@ function Post({
 	img: string;
 }) {
 	return (
-		<div>
-			<div className="top-half flex flex-col justify-center gap-5 px-40 py-5">
+		<div className="post-content w-2/5 bg-primary bg-opacity-10 my-10 px-10 rounded-lg">
+			<div className="top-half flex flex-col justify-center gap-5 py-5 w-full box-border">
 				<div className="flex flex-row gap-4">
 					<div className="avatar">
-						<div className="w-20 rounded">
+						<div className="w-12 rounded-full">
 							<img src={img} />
 						</div>
 					</div>
@@ -64,9 +64,9 @@ export default function Feed() {
 		fetchPosts();
 	}, [userid]);
 	return (
-		<div className="homepage inline-flex flex-row">
+		<div className="homepage inline-flex flex-row w-screen">
 			<MenuBar2 createPostForm={createPostForm()} />
-			<div className="feed-container flex flex-col grow justify-center h-full w-full overflow-hidden">
+			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
 					className="btn shadow-none justify-start gap-7 fixed right-10 bottom-10"
 					onClick={() =>
@@ -97,12 +97,13 @@ export default function Feed() {
 						{createPostForm()}
 					</dialog>
 				</button>
-				<Post
+				{/* <Post
 					username={defaultUsername}
 					title={defaultTitle}
 					description={defaultDesc}
 					img={defaultImg}
-				/>
+				/> */}
+				<div className="post-container w-full flex flex-col items-center">
 				{feedData.map((post) => (
 					<Post
 						key={post.username}
@@ -112,6 +113,7 @@ export default function Feed() {
 						img={post.image_url}
 					/>
 				))}
+				</div>
 			</div>
 		</div>
 	);

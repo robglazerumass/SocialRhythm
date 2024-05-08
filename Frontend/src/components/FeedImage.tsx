@@ -4,8 +4,8 @@ export default function FeedImage() {
 	const imageUrl =
 		"https://images.pexels.com/photos/17731677/pexels-photo-17731677/free-photo-of-a-red-parachute-flying-through-the-air-in-a-blue-sky.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load";
 	return (
-		<div className="image-view relative w-2/5 z-0">
-			<img src={imageUrl} className="post-image aspect-square" />
+		<div className="image-view relative w-full">
+			<img src={imageUrl} className="post-image aspect-square object-cover" />
 			<a
 				className="spotify-link absolute bottom-5 right-5"
 				href="https://www.spotify.com">
