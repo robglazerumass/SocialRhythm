@@ -332,9 +332,16 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
     }
 });
 
-//Rating query terms: { requestType, ratingDest, ratingType, username, destId }
-// Takes in a request with above fields and adds or removes a like or dislike from 
-// a post.
+/**
+ * Takes in a request with above fields and adds or removes a like or dislike from 
+ * a post or comment.
+ * 
+ * @param {string} requestType - Specifies adding or removing a rating using "add" or "remove"
+ * @param {string} ratingType - Specifies the rating type using either "like" or "dislike"
+ * @param {string} username - Specifies the username of the user who is making the rating
+ * @param {string} destId - Specifies the "_id" of the post or comment that rating should be added to
+ * @returns {json or BackendError} Returns either json declaring success or throws a BackendError on failure 
+ */
 app.post("/api/Rating", async (req, res, next) => {
     try {
         let query = req.query;
