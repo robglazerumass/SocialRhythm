@@ -1,6 +1,6 @@
 import FeedImage from "../components/FeedImage";
 import Interaction from "../components/Interaction";
-import MenuBar2 from "../components/MenuBar2";
+import MenuBar from "../components/MenuBar";
 import postMockData from "../mockData/postMockData";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -65,13 +65,14 @@ export default function Feed() {
 	}, [userid]);
 	return (
 		<div className="homepage inline-flex flex-row w-screen">
-			<MenuBar2 createPostForm={createPostForm()} />
+			<MenuBar createPostForm={createPostForm()} />
 			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
 					className="btn shadow-none justify-start gap-7 fixed right-10 bottom-10"
 					onClick={() =>
 						document.getElementById("create_post_modal").showModal()
-					}>
+					}
+				>
 					{/* <a
 							className="flex justify-start gap-7 text-black"
 							// onClick={() =>
@@ -84,7 +85,8 @@ export default function Feed() {
 						viewBox="0 0 24 24"
 						strokeWidth={1.5}
 						stroke="currentColor"
-						className="w-6 h-6">
+						className="w-6 h-6"
+					>
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"
@@ -104,15 +106,15 @@ export default function Feed() {
 					img={defaultImg}
 				/> */}
 				<div className="post-container w-full flex flex-col items-center">
-				{feedData.map((post) => (
-					<Post
-						key={post.username}
-						username={post.username}
-						title={post.title}
-						description={post.description}
-						img={post.image_url}
-					/>
-				))}
+					{feedData.map((post) => (
+						<Post
+							key={post.username}
+							username={post.username}
+							title={post.title}
+							description={post.description}
+							img={post.image_url}
+						/>
+					))}
 				</div>
 			</div>
 		</div>
