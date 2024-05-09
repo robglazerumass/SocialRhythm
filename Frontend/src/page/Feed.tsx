@@ -33,7 +33,7 @@ function Post({
 				</div>
 				<div className="flex flex-col gap-4">
 					<p className="font-extrabold text-3xl">{title}</p>
-					<p className="max-w-full flex flex-wrap">{description}</p>
+					<p className="max-w-full flex flex-wrap break-all">{description}</p>
 				</div>
 			</div>
 			<div className="temp-feed-view h-full overflow-y-visible w-full flex flex-col items-center box-border">
@@ -102,17 +102,17 @@ export default function Feed() {
 					title={defaultTitle}
 					description={defaultDesc}
 					img={defaultImg}
-				/> */}
+				/>
 				<div className="post-container w-full flex flex-col items-center">
-				{feedData.map((post) => (
-					<Post
-						key={post.username}
-						username={post.username}
-						title={post.title}
-						description={post.description}
-						img={post.image_url}
-					/>
-				))}
+					{feedData.map((post) => (
+						<Post
+							key={post.username}
+							username={post.username}
+							title={post.title}
+							description={post.description}
+							img={post.image_url}
+						/>
+					))}
 				</div>
 			</div>
 		</div>
