@@ -340,23 +340,22 @@ app.post("/api/Rating", async (req, res, next) => {
         let query = req.query;
         let result, user, dest, likes, dislikes;
 
-        if (!isValidQuery([query.requestType, query.ratingDest, query.ratingType, query.username, query.destId]))
-            throw BackendErrorType.MISSING_FIELDS;
+        if (!isValidQuery([query.requestType, query.ratingType, query.username, query.destId]))
+            throw BackendErrorType.INVALID_QUERY;
 
         user = await UserData.findOne({ username: query.username });
 
-        if(query.ratingDest == "post"){
-            try {
-                dest = await PostData.findOne({ _id: query.destId });
-            }
-            catch (error) {
-                throw BackendErrorType.POST_DNE;
-            }
+        if (user == null)
+            throw BackendErrorType.USER_DNE;
 
-            if (dest == null)
-                throw BackendErrorType.POST_DNE;
+        try {
+            dest = await PostData.findOne({ _id: query.destId });
+        }
+        catch (error) {
+            throw BackendErrorType.POST_DNE;
+        }
 
-        }else if(query.ratingDest == "comment"){
+        if (dest == null) {
             try {
                 dest = await CommentData.findOne({ _id: query.destId });
             }
@@ -364,17 +363,18 @@ app.post("/api/Rating", async (req, res, next) => {
                 throw BackendErrorType.COMMENT_DNE;
             }
 
-            if (dest == null)
-                throw BackendErrorType.COMMENT_DNE;
-        }else{
-            throw BackendErrorType.INVALID_QUERY;
+            if (dest == null) {
+                throw BackendErrorType.POST_COMMENT_DNE;
+            }
+            else {
+                likes = dest.comment_like_list;
+                dislikes = dest.comment_dislike_list;
+            }
         }
-
-        likes = dest.likes_list;
-        dislikes = dest.dislikes_list;
-
-        if (user == null)
-            throw BackendErrorType.USER_DNE;
+        else {
+            likes = dest.likes_list;
+            dislikes = dest.dislikes_list;
+        }
 
         if (query.requestType == "add") {
             if (query.ratingType == "like" && !(likes.includes(user.username) || dislikes.includes(user.username))) {
@@ -386,7 +386,7 @@ app.post("/api/Rating", async (req, res, next) => {
                 await dest.save();
             }
             else {
-                throw BackendErrorType.INVALID_QUERY;
+                throw BackendErrorType.INVALID_RATINGTYPE;
             }
         }
         else if (query.requestType == "remove") {
@@ -399,11 +399,11 @@ app.post("/api/Rating", async (req, res, next) => {
                 await dest.save();
             }
             else {
-                throw BackendErrorType.INVALID_QUERY;
+                throw BackendErrorType.INVALID_RATINGTYPE;
             }
         }
         else {
-            throw BackendErrorType.INVALID_QUERY;
+            throw BackendErrorType.INVALID_REQUESTTYPE;
         }
 
         result = { result: 'SUCCESS' };
