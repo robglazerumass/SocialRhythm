@@ -5,6 +5,7 @@ import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js
 import { BackendErrorType } from "./BackendError.js";
 import { ObjectId } from "mongodb";
 import bodyParser from 'body-parser';
+import { searchSpotify } from "./spotify.js";
 
 const app = express();
 app.use(cors());
@@ -293,6 +294,37 @@ app.get("/api/search", async (req, res, next) => {
     }
 });
 
+/**
+ * Search query field: { searchTerm, type, limit }. Where 'searchTerm' is a string, 'type' is a 
+ * comma-separated list of strings, and 'limit' is an integer. Defaults to 
+ * { "tag:new", "album,artist,track", 10 }
+ * 
+ * Uses the Spotify API to search music content. The full content of the object can be seen at
+ * https://developer.spotify.com/documentation/web-api/. 
+ * 
+ * Items of each type are pruned to only contain as follows:
+ * 
+ * albums:
+ *      type flag, artists, spotify link, images, name, release date, number of songs
+ * artists:
+ *      type flag, genres, spotify link, images, name, popularity 0-100
+ * tracks:
+ *      type flag, album, artists, duration (ms), explicit, spotify link, name, 
+ *      popularity 0-100, audio preview link
+ */
+app.get("/api/searchContent", async (req, res, next) => {
+    try {
+        const query = req.query;
+        const search = query.searchTerm ?? "tag:new";
+        const types = query.type ?? "album,artist,track";
+        const limit = query.limit ?? 10;
+        let data = await searchSpotify(search.length === 0 ? "tag:new" : search, types, limit);
+        res.json(data);
+    } catch (error) {
+        next(error);
+    }
+});
+
 // Create Post body fields: { username, title, description, spotify_link(OPTIONAL), image_url(OPTIONAL) }
 // takes in a request body with above fields and returns a JSON Success or throws a Backend Error
 app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
@@ -331,6 +363,7 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
         next(error);
     }
 });
+
 
 /**
  * Takes in a request with above fields and adds or removes a like or dislike from 
@@ -420,6 +453,80 @@ app.post("/api/Rating", async (req, res, next) => {
         next(error);
     }
 });
+
+
+// createComment query fields { username, postId, commentString }
+app.post('/api/createComment', async(req, res, next) =>{
+    try {
+        let query = req.query
+
+        if(!isValidQuery([query.username, query.postId, query.commentString]))
+            throw BackendErrorType.INVALID_QUERY
+
+        // get the user
+        let user = await UserData.findOne({ username: query.username })
+
+        if (user === null || user === undefined)
+            throw BackendErrorType.USER_DNE
+
+        // get the post
+        let post = await PostData.findOne({ _id : query.postId })
+
+        if (post === null || post === undefined)
+            throw BackendErrorType.POST_DNE
+        
+        // create a new comment
+        let comment = await CommentData.create({
+            post_id: query.postId,
+            username: query.username,
+            comment_string: query.commentString,
+            comment_like_list: [],
+            comment_dislike_list: [],
+            date_created: new Date(),
+        })
+
+        // add comment to post
+        post.comments_list.push(comment._id)
+        await post.save()
+
+        res.json({ result: 'Success', message: 'Comment Created' })
+    }
+    catch(error){
+        if (error.name === 'CastError') {
+            next(BackendErrorType.POST_DNE)
+        } else {
+            next(error); 
+        }
+    }
+
+})
+
+// getComments query fields { postId }
+app.get('/api/getComments', async(req, res, next) => {
+    try{
+        let query = req.query
+
+        if(!isValidQuery([query.postId]))
+            throw BackendErrorType.INVALID_QUERY
+
+        let post = await PostData.findOne({ _id : query.postId })
+
+        if(post === null || post === undefined)
+            throw BackendErrorType.POST_DNE
+        
+        let comments = await CommentData.find({ post_id : query.postId })
+            .sort({ date_created: 1 })
+
+        res.json(comments)
+    }
+    catch(error){
+        if (error.name === 'CastError') {
+            next(BackendErrorType.POST_DNE)
+        } else {
+            next(error); 
+        }
+    }
+})
 
 // Handles errors thrown to Express
 app.use((error, req, res, next) => {
