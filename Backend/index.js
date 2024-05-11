@@ -3,8 +3,9 @@ import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
 import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
-import {ObjectId} from "mongodb";
+import { ObjectId } from "mongodb";
 import bodyParser from 'body-parser';
+import { searchSpotify } from "./spotify.js";
 
 const app = express();
 app.use(cors());
@@ -19,6 +20,18 @@ app.get("/", (request, response) => {
 // checks if any query field you are expecting is undefined
 function isValidQuery(queryList) {
     return queryList.every(field => field !== undefined);
+}
+
+function validateRating(user, post, ratingType) {
+    let likes = post.likes_list;
+    let dislikes = post.dislikes_list;
+
+    if (likes.includes(user.username) || dislikes.includes(user.username)) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 
@@ -194,7 +207,7 @@ app.post('/api/follow', async (req, res, next) => {
 app.get("/api/search", async (req, res, next) => {
     try {
         let query = req.query;
-  
+
         //Validate the query
         if (!isValidQuery([query.searchTerm]))
             throw BackendErrorType.INVALID_QUERY;
@@ -276,7 +289,38 @@ app.get("/api/search", async (req, res, next) => {
         }
 
         res.json(result);
-    } catch (error){
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * Search query field: { searchTerm, type, limit }. Where 'searchTerm' is a string, 'type' is a 
+ * comma-separated list of strings, and 'limit' is an integer. Defaults to 
+ * { "tag:new", "album,artist,track", 10 }
+ * 
+ * Uses the Spotify API to search music content. The full content of the object can be seen at
+ * https://developer.spotify.com/documentation/web-api/. 
+ * 
+ * Items of each type are pruned to only contain as follows:
+ * 
+ * albums:
+ *      type flag, artists, spotify link, images, name, release date, number of songs
+ * artists:
+ *      type flag, genres, spotify link, images, name, popularity 0-100
+ * tracks:
+ *      type flag, album, artists, duration (ms), explicit, spotify link, name, 
+ *      popularity 0-100, audio preview link
+ */
+app.get("/api/searchContent", async (req, res, next) => {
+    try {
+        const query = req.query;
+        const search = query.searchTerm ?? "tag:new";
+        const types = query.type ?? "album,artist,track";
+        const limit = query.limit ?? 10;
+        let data = await searchSpotify(search.length === 0 ? "tag:new" : search, types, limit);
+        res.json(data);
+    } catch (error) {
         next(error);
     }
 });
@@ -286,10 +330,10 @@ app.get("/api/search", async (req, res, next) => {
 app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
     try {
         let body = req.body;
-        if(!isValidQuery([body.username, body.title, body.description]))
+        if (!isValidQuery([body.username, body.title, body.description]))
             throw BackendErrorType.MISSING_FIELDS;
 
-        if(!body.title || !body.description)
+        if (!body.title || !body.description)
             throw BackendErrorType.NO_TITLE_OR_DESC;
 
         let user = await UserData.findOne({ username: body.username });
@@ -314,6 +358,96 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
 
         const responseData = { result: 'SUCCESS', message: 'New Post Created' };
         res.json(responseData);
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+/**
+ * Takes in a request with above fields and adds or removes a like or dislike from 
+ * a post or comment.
+ * 
+ * @param {string} requestType - Specifies adding or removing a rating using "add" or "remove"
+ * @param {string} ratingType - Specifies the rating type using either "like" or "dislike"
+ * @param {string} username - Specifies the username of the user who is making the rating
+ * @param {string} destId - Specifies the "_id" of the post or comment that rating should be added to
+ * @returns {json or BackendError} Returns either json declaring success or throws a BackendError on failure 
+ */
+app.post("/api/Rating", async (req, res, next) => {
+    try {
+        let query = req.query;
+        let result, user, dest, likes, dislikes;
+
+        if (!isValidQuery([query.requestType, query.ratingType, query.username, query.destId]))
+            throw BackendErrorType.INVALID_QUERY;
+
+        user = await UserData.findOne({ username: query.username });
+
+        if (user == null)
+            throw BackendErrorType.USER_DNE;
+
+        try {
+            dest = await PostData.findOne({ _id: query.destId });
+        }
+        catch (error) {
+            throw BackendErrorType.POST_DNE;
+        }
+
+        if (dest == null) {
+            try {
+                dest = await CommentData.findOne({ _id: query.destId });
+            }
+            catch (error) {
+                throw BackendErrorType.COMMENT_DNE;
+            }
+
+            if (dest == null) {
+                throw BackendErrorType.POST_COMMENT_DNE;
+            }
+            else {
+                likes = dest.comment_like_list;
+                dislikes = dest.comment_dislike_list;
+            }
+        }
+        else {
+            likes = dest.likes_list;
+            dislikes = dest.dislikes_list;
+        }
+
+        if (query.requestType == "add") {
+            if (query.ratingType == "like" && !(likes.includes(user.username) || dislikes.includes(user.username))) {
+                likes.push(user.username);
+                await dest.save();
+            }
+            else if (query.ratingType == "dislike" && !(likes.includes(user.username) || dislikes.includes(user.username))) {
+                dislikes.push(user.username);
+                await dest.save();
+            }
+            else {
+                throw BackendErrorType.INVALID_RATINGTYPE;
+            }
+        }
+        else if (query.requestType == "remove") {
+            if (query.ratingType == "like" && likes.includes(user.username)) {
+                likes.pull(user.username);
+                await dest.save();
+            }
+            else if (query.ratingType == "dislike" && dislikes.includes(user.username)) {
+                dislikes.pull(user.username);
+                await dest.save();
+            }
+            else {
+                throw BackendErrorType.INVALID_RATINGTYPE;
+            }
+        }
+        else {
+            throw BackendErrorType.INVALID_REQUESTTYPE;
+        }
+
+        result = { result: 'SUCCESS' };
+        res.json(result);
 
     } catch (error) {
         next(error);
@@ -393,7 +527,6 @@ app.get('/api/getComments', async(req, res, next) => {
         }
     }
 })
-
 
 // Handles errors thrown to Express
 app.use((error, req, res, next) => {
