@@ -1,6 +1,6 @@
 import FeedImage from "../components/FeedImage";
 import Interaction from "../components/Interaction";
-import MenuBar from "../components/MenuBar";
+import MenuBar from "../components/menubar";
 import postMockData from "../mockData/postMockData";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -68,11 +68,10 @@ export default function Feed() {
 			<MenuBar createPostForm={createPostForm()} />
 			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
-					className="btn shadow-none justify-start gap-7 fixed right-10 bottom-10"
+					className="btn bg-primary bg-opacity-30 border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"
 					onClick={() =>
 						document.getElementById("create_post_modal").showModal()
-					}
-				>
+					}>
 					{/* <a
 							className="flex justify-start gap-7 text-black"
 							// onClick={() =>
@@ -85,8 +84,7 @@ export default function Feed() {
 						viewBox="0 0 24 24"
 						strokeWidth={1.5}
 						stroke="currentColor"
-						className="w-6 h-6"
-					>
+						className="w-6 h-6">
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"
@@ -99,12 +97,12 @@ export default function Feed() {
 				<dialog id="create_post_modal" className="modal">
 					{createPostForm()}
 				</dialog>
-				<Post
+				{/* <Post
 					username={defaultUsername}
 					title={defaultTitle}
 					description={defaultDesc}
 					img={defaultImg}
-				/>
+				/> */}
 				<div className="post-container w-full flex flex-col items-center">
 					{feedData.map((post) => (
 						<Post
