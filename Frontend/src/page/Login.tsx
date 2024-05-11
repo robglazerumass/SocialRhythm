@@ -52,7 +52,7 @@ function Login() {
 	};
 
 	return (
-		<div className="flex items-center justify-center">
+		<div className="flex items-center justify-center h-screen">
 			<div className="flex flex-row bg-base-100 w-full shadow-xl h-5/6 lg:w-5/6 rounded-lg">
 				<div className="flex w-0 lg:w-3/5">
 					<img
@@ -61,7 +61,7 @@ function Login() {
 						alt="party"
 					/>
 				</div>
-				<div className="card-body lg:w-96">
+				<div className="card-body lg:w-96 flex justify-center">
 					<h2 className="card-title text-3xl">Login</h2>
 					<div className="flex flex-col gap-3">
 						<form className="flex flex-col gap-2" onSubmit={handleSubmit}>
