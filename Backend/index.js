@@ -15,9 +15,11 @@ app.get("/", (request, response) => {
     response.send({ worked: true });
 });
 
-// query is the list of query fields you are expecting
-// ex: implemented in code for login : isValidQuery([query.username, query.password])
-// checks if any query field you are expecting is undefined
+/**
+ * Checks if all query fields are present.
+ * @param {Array} queryList - List of query fields to be validated.
+ * @returns {boolean} - Returns true if all query fields are present, false otherwise.
+ */
 function isValidQuery(queryList) {
     return queryList.every(field => field !== undefined);
 }
@@ -35,8 +37,24 @@ function validateRating(user, post, ratingType) {
 }
 
 
-//Login query fields: { username, password }
-// takes in a query with above fields and returns a JSON Success or throws a Backend Error
+/**
+ * Retrieves user account information based on the provided username and password.
+ * 
+ * @param {string} username - The username of the user.
+ * @param {string} password - The password of the user.
+ * @returns {JSON} - An object containing the result of the login operation and user account information.
+ * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the login credentials are incorrect.
+ * @httpMethod GET
+ * @example
+ * Request:
+ *    GET /api/login?username=johndoe&password=examplepassword
+ * Response (Success):
+ *    {
+ *      "result": "SUCCESS",
+ *      "account_info": "5ff8ac275c821433f8f59c29" // Example ObjectId
+ *    }
+ * Response (Error): // See BackendError.js for more information
+ */
 app.get('/api/login', async (req, res, next) => {
     try {
         let query = req.query;
@@ -56,8 +74,28 @@ app.get('/api/login', async (req, res, next) => {
     }
 });
 
-// Signup query fields : { firsname, lastname, username, password, email }
-// takes in a query with above fields and returns a JSON Success or throws a Backend Error
+/**
+ * Creates a new user account based on the provided information.
+ * 
+ * @param {string} firstname - The first name of the user.
+ * @param {string} lastname - The last name of the user.
+ * @param {string} username - The desired username for the new account.
+ * @param {string} password - The password for the new account.
+ * @param {string} email - The email address of the user.
+ * @returns {Object} - An object containing the result of the signup operation and a success message if successful.
+ * @throws {BackendErrorType} - Throws an error if the provided query is invalid, if the username already exists,
+ *                              or if there's an error during user creation.
+ * @httpMethod POST
+ * @example
+ * Request:
+ *    POST /api/signup?firstname=John&lastname=Doe&username=johndoe&password=examplepassword&email=johndoe@example.com
+ * Response (Success):
+ *    {
+ *      "result": "SUCCESS",
+ *      "message": "New Account Created"
+ *    }
+ * Response (Error): // See BackendError.js for more information
+ */
 app.post('/api/signup', async (req, res, next) => {
     try {
         let query = req.query;
@@ -91,9 +129,33 @@ app.post('/api/signup', async (req, res, next) => {
     }
 })
 
-// feed fields: { username, xPosts, pageNum }
-// pageNum starts at 0 ... N/xPosts
-// takes in a query with above fields and returns a JSON list of posts or throws a Backend Error
+/**
+ * Retrieves a list of posts for the user's feed based on the provided parameters.
+ * 
+ * @param {string} username - The username of the user.
+ * @param {number} xPosts - The number of posts per page.
+ * @param {number} pageNum - The page number (starting from 0).
+ * @returns {Array} - An array of post objects sorted by most recent.
+ * @throws {BackendErrorType} - Throws an error if the provided query is invalid, if the user does not exist,
+ *                              if the page number is invalid, or if the feed is empty.
+ * @httpMethod GET
+ * @example
+ * Request:
+ *    GET /api/feed?username=johndoe&xPosts=10&pageNum=0
+ * Response (Success):
+ *    [
+ *      {
+ *          "_id": "5ff8ac275c821433f8f59c29",
+ *          "username": "johndoe",
+ *          "title": "Example Post",
+ *          "description": "This is an example post.",
+ *          "date_created": "2023-05-10T12:00:00Z",
+ *          // Additional fields...
+ *      },
+ *      // Additional posts...
+ *    ]
+ * Response (Error): // See BackendError.js for more information
+ */
 app.get('/api/feed', async (req, res, next) => {
     try {
         const query = req.query
@@ -127,8 +189,39 @@ app.get('/api/feed', async (req, res, next) => {
     }
 })
 
-// feed fields: { username }
-// returns the profile of the account with this username
+/**
+ * Retrieves the profile of the user with the provided username, along with their associated posts.
+ * 
+ * @param {string} username - The username of the user whose profile to retrieve.
+ * @returns {Object} - An object containing the user's profile information and their associated posts.
+ * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the user does not exist.
+ * @httpMethod GET
+ * @example
+ * Request:
+ *    GET /api/profile?username=johndoe
+ * Response (Success):
+ *    {
+ *      "user_first_name": "John",
+ *      "user_last_name": "Doe",
+ *      "user_email": "john.doe@example.com",
+ *      "username": "johndoe",
+ *      "user_bio": "Lorem ipsum dolor sit amet...",
+ *      "user_following_list": ["user1", "user2", "user3"],
+ *      "user_follower_list": ["user4", "user5"],
+ *      "user_post_list": [
+ *          {
+ *              "_id": "5ff8ac275c821433f8f59c29",
+ *              "username": "johndoe",
+ *              "title": "Example Post",
+ *              "description": "This is an example post.",
+ *              "date_created": "2023-05-10T12:00:00Z",
+ *              // Additional fields...
+ *          },
+ *          // Additional posts...
+ *      ]
+ *    }
+ * Response (Error): // See BackendError.js for more information
+ */
 app.get('/api/profile', async (req, res, next) => {
     try {
         const query = req.query
@@ -455,7 +548,26 @@ app.post("/api/Rating", async (req, res, next) => {
 });
 
 
-// createComment query fields { username, postId, commentString }
+/**
+ * Creates a new comment on a post specified by the provided postId.
+ * 
+ * @param {string} username - The username of the user creating the comment.
+ * @param {string} postId - The ID of the post on which the comment is being created.
+ * @param {string} commentString - The content of the comment.
+ * @returns {Object} - An object indicating the success of the comment creation.
+ * @throws {BackendErrorType} - Throws an error if the provided query is invalid, if the user or post does not exist,
+ *                              or if there's an error during comment creation.
+ * @httpMethod POST
+ * @example
+ * Request:
+ *    POST /api/createComment?username=johndoe&postId=5ff8ac275c821433f8f59c29&commentString=Great%20post!
+ * Response (Success):
+ *    {
+ *      "result": "Success",
+ *      "message": "Comment Created"
+ *    }
+ * Response (Error): // See BackendError.js for more information
+ */
 app.post('/api/createComment', async(req, res, next) =>{
     try {
         let query = req.query
@@ -499,9 +611,34 @@ app.post('/api/createComment', async(req, res, next) =>{
         }
     }
 
-})
+});
 
-// getComments query fields { postId }
+
+/**
+ * Retrieves the comments associated with the specified post.
+ * 
+ * @param {string} postId - The ID of the post for which comments are to be retrieved.
+ * @returns {Array} - An array containing the comments associated with the specified post.
+ * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the post does not exist.
+ * @httpMethod GET
+ * @example
+ * Request:
+ *    GET /api/getComments?postId=5ff8ac275c821433f8f59c29
+ * Response (Success):
+ *    [
+ *      {
+ *          "_id": "610b123dd3643f001e2156a2",
+ *          "post_id": "5ff8ac275c821433f8f59c29",
+ *          "username": "johndoe",
+ *          "comment_string": "Great post!",
+ *          "comment_like_list": [],
+ *          "comment_dislike_list": [],
+ *          "date_created": "2023-05-10T12:00:00Z"
+ *      },
+ *      // Additional comments...
+ *    ]
+ * Response (Error): // See BackendError.js for more information
+ */
 app.get('/api/getComments', async(req, res, next) => {
     try{
         let query = req.query
