@@ -9,6 +9,7 @@ import bodyParser from 'body-parser';
 import { searchSpotify } from "./spotify.js";
 import { login, signup } from "./account.js";
 import { feed, createPost, rating, createComment, getComments } from "./posts.js";
+import { profile, follow, search } from "./users.js";
 
 const app = express();
 app.use(cors());
@@ -27,6 +28,13 @@ function isValidQuery(queryList) {
     return queryList.every(field => field !== undefined);
 }
 
+/**
+ * Validates the rating for a post.
+ * @param {Object} user - The user object.
+ * @param {Object} post - The post object.
+ * @param {string} ratingType - The type of rating (like or dislike).
+ * @returns {boolean} - Returns true if the user has not already liked or disliked the post, false otherwise.
+*/
 function validateRating(user, post, ratingType) {
     let likes = post.likes_list;
     let dislikes = post.dislikes_list;
@@ -146,11 +154,10 @@ app.get('/api/feed', async (req, res, next) => {
 })
 
 /**
+ * Search query field: { username }
  * Retrieves the profile of the user with the provided username, along with their associated posts.
- * 
- * @param {string} username - The username of the user whose profile to retrieve.
- * @returns {Object} - An object containing the user's profile information and their associated posts.
- * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the user does not exist.
+ * If successful, returns a JSON object with the user's profile information and their associated posts.
+ * If invalid, throws a backend error with an appropriate message.
  * @httpMethod GET
  * @example
  * Request:
@@ -184,26 +191,7 @@ app.get('/api/profile', async (req, res, next) => {
         if (!isValidQuery([query.username]))
             throw BackendErrorType.INVALID_QUERY
 
-        let user = await UserData.findOne({ username: query.username })
-
-        if (user === null || user === undefined)
-            throw BackendErrorType.USER_DNE
-
-        // need to return a JSON with user profile information along with the list of posts by this user
-
-        let postList = await PostData.find({ username: query.username })
-
-        let result = {
-            user_first_name: user["user_first_name"],
-            user_last_name: user["user_last_name"],
-            user_email: user["user_email"],
-            username: user["username"],
-            user_bio: user["user_bio"],
-            user_following_list: user["user_following_list"],
-            user_follower_list: user["user_follower_list"],
-            user_post_list: postList,
-        }
-
+        let result = await profile(query.username)
         res.json(result)
     }
     catch (error) {
@@ -211,8 +199,21 @@ app.get('/api/profile', async (req, res, next) => {
     }
 })
 
-//follow : {username, userToFollow}
-// takes in a query with above fields and returns a JSON Success or throws a Backend Error
+/**
+ * Search query field: { username, userToFollow }
+ * User with the provided username follows the user with the provided userToFollow.
+ * If successful, returns a JSON object with a success message if the user is now following the target user.
+ * If invalid, throws a backend error with an appropriate message.
+ * @httpMethod POST
+ * @example
+ * Request:
+ *   POST /api/follow?username=johndoe&userToFollow=janedoe
+ * Response (Success):
+ *  {
+ *  "result": "SUCCESS"
+ * }
+ * Response (Error): // See BackendError.js for more information
+*/
 app.post('/api/follow', async (req, res, next) => {
     try {
         let { username, userToFollow } = req.query;
@@ -220,29 +221,9 @@ app.post('/api/follow', async (req, res, next) => {
         if (!isValidQuery([username, userToFollow])) {
             throw BackendErrorType.INVALID_QUERY;
         }
-
-        if (username === userToFollow) {
-            throw BackendErrorType.SELF_FOLLOW;
-        }
-
-        const user = await UserData.findOne({ username: username });
-        const targetUser = await UserData.findOne({ username: userToFollow });
-
-        if (!user || !targetUser) {
-            throw BackendErrorType.USER_DNE;
-        }
-
-        if (user.user_following_list.includes(userToFollow)) {
-            throw BackendErrorType.ALREADY_FOLLOWING;
-        }
-
-        user.user_following_list.push(userToFollow);
-        await user.save();
-
-        targetUser.user_follower_list.push(username);
-        await targetUser.save();
-
-        res.json({ message: `You are now following ${userToFollow}` });
+        
+        let result = await follow(username, userToFollow);
+        res.json(result);
     } catch (error) {
         next(error);
     }
@@ -253,6 +234,28 @@ app.post('/api/follow', async (req, res, next) => {
 //The following endpoint recieves a searchTerm related to a user and queries the database using
 //autocomplete, along with fuzzy search, to find similar results, weighing them on accuracy,
 //and the type of category the searchTerm may be in (user_first_name || username || user_last_name)
+
+/**
+ * Search query field: { searchTerm }
+ * Searches for users based on the provided search term.
+ * If successful, returns an array of JSON results.
+ * If invalid, throws a backend error with an appropriate message.
+ * @httpMethod GET
+ * @example
+ * Request:
+ *   GET /api/search?searchTerm=johndoe
+ * Response (Success):
+ *  [
+ *     {
+ *      "_id": "5ff8ac275c821433f8f59c29",
+ *      "user_first_name": "John",
+ *      "user_last_name": "Doe",
+ *      "username" = "johndoe",
+ *      }
+ *     // Additional users...
+ * ]    
+ * Response (Error): // See BackendError.js for more information
+*/
 app.get("/api/search", async (req, res, next) => {
     try {
         let query = req.query;
@@ -261,82 +264,7 @@ app.get("/api/search", async (req, res, next) => {
         if (!isValidQuery([query.searchTerm]))
             throw BackendErrorType.INVALID_QUERY;
 
-        if (query.searchTerm == '') {
-            throw BackendErrorType.USER_NOT_FOUND;
-        }
-
-        let pipeline = [{
-            $search: {
-                index: "autoCompleteUsers",
-                compound: {
-                    should: [{
-                        phrase: {
-                            query: query.searchTerm,
-                            path: "user_first_name",
-                            score: { boost: { value: 10 } } /// <--- Score boosting on exact match
-                        }
-                    },
-                    {
-                        autocomplete: {
-                            query: query.searchTerm,
-                            path: "user_first_name",
-                            fuzzy: { "prefixLength": 2 }, /// <--- The first two letters must match
-                            score: { boost: { value: 10 } }
-                        }
-                    },
-                    {
-                        phrase: {
-                            query: query.searchTerm,
-                            path: "username",
-                            score: { boost: { value: 10 } } /// <--- Score boosting on exact match
-                        }
-                    },
-                    {
-                        autocomplete: {
-                            query: query.searchTerm,
-                            path: "username",
-                            fuzzy: { "prefixLength": 2 }, /// <--- The first two letters must match
-                            score: { boost: { value: 5 } }
-                        }
-                    },
-                    {
-                        phrase: {
-                            query: query.searchTerm,
-                            path: "user_last_name",
-                            score: { boost: { value: 10 } } /// <--- Score boosting on exact match
-                        }
-                    },
-                    {
-                        autocomplete: {
-                            query: query.searchTerm,
-                            path: "user_last_name",
-                            fuzzy: { "prefixLength": 2 }, /// <--- The first two letters must match
-                            score: { boost: { value: 2 } }
-                        }
-                    }
-                    ]
-                }
-            }
-        },
-        {
-            $limit: 20 /// <--- Limit the result array to 20
-        },
-        {
-            $project: { /// <--- Extract only the following infromation from each result to return
-                _id: 1,
-                user_first_name: 1,
-                user_last_name: 1,
-                username: 1,
-            }
-        }
-        ];
-
-        let result = await UserData.aggregate(pipeline);
-
-        if (result == 0) {
-            throw BackendErrorType.USER_NOT_FOUND;
-        }
-
+        let result = await search(query.searchTerm);
         res.json(result);
     } catch (error) {
         next(error);
