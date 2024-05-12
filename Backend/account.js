@@ -1,6 +1,8 @@
 import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
-import { ObjectId } from "mongodb";
+
+// This file contains the functions that handle user account creation and login.
+
 /**
  * Retrieves user account information based on the provided username and password.
  * 
@@ -8,16 +10,6 @@ import { ObjectId } from "mongodb";
  * @param {string} password - The password of the user.
  * @returns {JSON} - An object containing the result of the login operation and user account information.
  * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the login credentials are incorrect.
- * @httpMethod GET
- * @example
- * Request:
- *    GET /api/login?username=johndoe&password=examplepassword
- * Response (Success):
- *    {
- *      "result": "SUCCESS",
- *      "account_info": "5ff8ac275c821433f8f59c29" // Example ObjectId
- *    }
- * Response (Error): // See BackendError.js for more information
  */
 export async function login(username, password){
     let result = await UserData.findOne({ username: username, password: password });
@@ -39,16 +31,7 @@ export async function login(username, password){
  * @returns {Object} - An object containing the result of the signup operation and a success message if successful.
  * @throws {BackendErrorType} - Throws an error if the provided query is invalid, if the username already exists,
  *                              or if there's an error during user creation.
- * @httpMethod POST
- * @example
- * Request:
- *    POST /api/signup?firstname=John&lastname=Doe&username=johndoe&password=examplepassword&email=johndoe@example.com
- * Response (Success):
- *    {
- *      "result": "SUCCESS",
- *      "message": "New Account Created"
- *    }
- * Response (Error): // See BackendError.js for more information
+
  */
 export async function signup(firstname, lastname, username, password, email){
         let result = await UserData.findOne({ username: username })

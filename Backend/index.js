@@ -5,8 +5,10 @@ import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js
 import { BackendErrorType } from "./BackendError.js";
 import { ObjectId } from "mongodb";
 import bodyParser from 'body-parser';
+// Import the abstracted helper functions from the other files
 import { searchSpotify } from "./spotify.js";
 import { login, signup } from "./account.js";
+import { feed, createPost, rating, createComment, getComments } from "./posts.js";
 
 const app = express();
 app.use(cors());
@@ -43,7 +45,24 @@ function validateRating(user, post, ratingType) {
  * Validates the username and password provided in the query parameters.
  * If valid, returns a JSON object with a success message and account information.
  * If invalid, throws a backend error with an appropriate message.
-*/
+ * @httpMethod GET
+ * @example
+ * Request:
+ *    GET /api/feed?username=johndoe&xPosts=10&pageNum=0
+ * Response (Success):
+ *    [
+ *      {
+ *          "_id": "5ff8ac275c821433f8f59c29",
+ *          "username": "johndoe",
+ *          "title": "Example Post",
+ *          "description": "This is an example post.",
+ *          "date_created": "2023-05-10T12:00:00Z",
+ *          // Additional fields...
+ *      },
+ *      // Additional posts...
+ *    ]
+ * Response (Error): // See BackendError.js for more information
+ */
 app.get('/api/login', async (req, res, next) => {
     try {
         let query = req.query;
@@ -63,7 +82,16 @@ app.get('/api/login', async (req, res, next) => {
  * Validates the query parameters and creates a new user account.
  * If successful, returns a JSON object with a success message.
  * If invalid, throws a backend error with an appropriate message.
- * 
+ * @httpMethod POST
+ * @example
+ * Request:
+ *    POST /api/signup?firstname=John&lastname=Doe&username=johndoe&password=examplepassword&email=johndoe@example.com
+ * Response (Success):
+ *    {
+ *      "result": "SUCCESS",
+ *      "message": "New Account Created"
+ *    }
+ * Response (Error): // See BackendError.js for more information
 */
 app.post('/api/signup', async (req, res, next) => {
     try {
@@ -80,14 +108,10 @@ app.post('/api/signup', async (req, res, next) => {
 })
 
 /**
+ * Search query field: { username, password }
  * Retrieves a list of posts for the user's feed based on the provided parameters.
- * 
- * @param {string} username - The username of the user.
- * @param {number} xPosts - The number of posts per page.
- * @param {number} pageNum - The page number (starting from 0).
- * @returns {Array} - An array of post objects sorted by most recent.
- * @throws {BackendErrorType} - Throws an error if the provided query is invalid, if the user does not exist,
- *                              if the page number is invalid, or if the feed is empty.
+ * If successful, returns a JSON object with the user's feed.
+ * If invalid, throws a backend error with an appropriate message.
  * @httpMethod GET
  * @example
  * Request:
@@ -112,26 +136,8 @@ app.get('/api/feed', async (req, res, next) => {
         if (!isValidQuery([query.username, query.xPosts, query.pageNum]))
             throw BackendErrorType.INVALID_QUERY
 
-        let user = await UserData.findOne({ username: query.username })
+        let result = await feed(query.username, query.xPosts, query.pageNum)
 
-        if (user === null || user === undefined)
-            throw BackendErrorType.USER_DNE
-
-        if (query.pageNum < 0)
-            throw BackendErrorType.INVALID_FEED_PAGE
-
-        const followingList = user.user_following_list
-
-        if (followingList === undefined || followingList.length === 0)
-            throw BackendErrorType.FEED_DNE
-
-        // sorted by most recent
-        let result = await PostData.find({ $or: followingList.map(x => { return { "username": x } }) })
-            .sort({ date_created: -1 })
-            .skip(query.pageNum * query.xPosts)
-            .limit(query.xPosts)
-
-        // Front-End just wanted us to return the JSON directly to them
         res.json(result);
     }
     catch (error) {
@@ -370,38 +376,38 @@ app.get("/api/searchContent", async (req, res, next) => {
 
 // Create Post body fields: { username, title, description, spotify_link(OPTIONAL), image_url(OPTIONAL) }
 // takes in a request body with above fields and returns a JSON Success or throws a Backend Error
+
+/**
+ * Create Post body fields: { username, title, description, spotify_link(OPTIONAL), image_url(OPTIONAL) }
+ * Creates a new post based on the provided information.
+ * If successful, returns a JSON object with a success message.
+ * If invalid, throws a backend error with an appropriate message.
+ * @httpMethod POST
+ * @example
+ * Request:
+ *   POST /api/createPost
+ *      {
+ *      "username": "johndoe",
+ *      "title": "Example Post",
+ *      "description": "This is an example post.",
+ *      "spotify_link": "https://open.spotify.com/track/3n3Ppam7vgaVa1iaRUc9Lp",
+ *      "image_url": "https://example.com/image.jpg"
+ *      }
+ * Response (Success):
+ *   {
+ *     "result": "SUCCESS",
+ *    "message": "New Post Created"
+ * }
+ * 
+ */
 app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
+    console.log(req.body);
     try {
         let body = req.body;
         if (!isValidQuery([body.username, body.title, body.description]))
             throw BackendErrorType.MISSING_FIELDS;
-
-        if (!body.title || !body.description)
-            throw BackendErrorType.NO_TITLE_OR_DESC;
-
-        let user = await UserData.findOne({ username: body.username });
-
-        if (user == null)
-            throw BackendErrorType.USER_DNE;
-
-        const post = await PostData.create({
-            username: body.username,
-            title: body.title,
-            description: body.description,
-            spotify_link: body.spotify_link || '',
-            image_url: body.image_url || '',
-            likes_list: [],
-            dislikes_list: [],
-            comments_list: [],
-            date_created: new Date(),
-        });
-
-        user.user_post_list.push(post._id);
-        await user.save();
-
-        const responseData = { result: 'SUCCESS', message: 'New Post Created' };
+        let responseData = await createPost(body.username, body.title, body.description, body.spotify_link, body.image_url);
         res.json(responseData);
-
     } catch (error) {
         next(error);
     }
@@ -409,87 +415,28 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
 
 
 /**
+ * Search query field: { requestType, ratingType, username, destId }
  * Takes in a request with above fields and adds or removes a like or dislike from 
  * a post or comment.
- * 
- * @param {string} requestType - Specifies adding or removing a rating using "add" or "remove"
- * @param {string} ratingType - Specifies the rating type using either "like" or "dislike"
- * @param {string} username - Specifies the username of the user who is making the rating
- * @param {string} destId - Specifies the "_id" of the post or comment that rating should be added to
- * @returns {json or BackendError} Returns either json declaring success or throws a BackendError on failure 
+ * If successful, returns a JSON object with a success message.
+ * If invalid, throws a backend error with an appropriate message.
+ * @httpMethod POST
+ * @example
+ * Request:
+ *   POST /api/Rating?requestType=add&ratingType=like&username=johndoe&destId=5ff8ac275c821433f8f59c29
+ * Response (Success):
+ *  {
+ *   "result": "SUCCESS"
+ *  }
+ * Response (Error): // See BackendError.js for more information
  */
 app.post("/api/Rating", async (req, res, next) => {
     try {
         let query = req.query;
-        let result, user, dest, likes, dislikes;
-
         if (!isValidQuery([query.requestType, query.ratingType, query.username, query.destId]))
             throw BackendErrorType.INVALID_QUERY;
 
-        user = await UserData.findOne({ username: query.username });
-
-        if (user == null)
-            throw BackendErrorType.USER_DNE;
-
-        try {
-            dest = await PostData.findOne({ _id: query.destId });
-        }
-        catch (error) {
-            throw BackendErrorType.POST_DNE;
-        }
-
-        if (dest == null) {
-            try {
-                dest = await CommentData.findOne({ _id: query.destId });
-            }
-            catch (error) {
-                throw BackendErrorType.COMMENT_DNE;
-            }
-
-            if (dest == null) {
-                throw BackendErrorType.POST_COMMENT_DNE;
-            }
-            else {
-                likes = dest.comment_like_list;
-                dislikes = dest.comment_dislike_list;
-            }
-        }
-        else {
-            likes = dest.likes_list;
-            dislikes = dest.dislikes_list;
-        }
-
-        if (query.requestType == "add") {
-            if (query.ratingType == "like" && !(likes.includes(user.username) || dislikes.includes(user.username))) {
-                likes.push(user.username);
-                await dest.save();
-            }
-            else if (query.ratingType == "dislike" && !(likes.includes(user.username) || dislikes.includes(user.username))) {
-                dislikes.push(user.username);
-                await dest.save();
-            }
-            else {
-                throw BackendErrorType.INVALID_RATINGTYPE;
-            }
-        }
-        else if (query.requestType == "remove") {
-            if (query.ratingType == "like" && likes.includes(user.username)) {
-                likes.pull(user.username);
-                await dest.save();
-            }
-            else if (query.ratingType == "dislike" && dislikes.includes(user.username)) {
-                dislikes.pull(user.username);
-                await dest.save();
-            }
-            else {
-                throw BackendErrorType.INVALID_RATINGTYPE;
-            }
-        }
-        else {
-            throw BackendErrorType.INVALID_REQUESTTYPE;
-        }
-
-        result = { result: 'SUCCESS' };
+        let result = await rating(query.requestType, query.ratingType, query.username, query.destId);
         res.json(result);
 
     } catch (error) {
@@ -499,14 +446,10 @@ app.post("/api/Rating", async (req, res, next) => {
 
 
 /**
+ * Search query field: { username, password }
  * Creates a new comment on a post specified by the provided postId.
- * 
- * @param {string} username - The username of the user creating the comment.
- * @param {string} postId - The ID of the post on which the comment is being created.
- * @param {string} commentString - The content of the comment.
- * @returns {Object} - An object indicating the success of the comment creation.
- * @throws {BackendErrorType} - Throws an error if the provided query is invalid, if the user or post does not exist,
- *                              or if there's an error during comment creation.
+ * If successful, returns a JSON object with a success message.
+ * If invalid, throws a backend error with an appropriate message.
  * @httpMethod POST
  * @example
  * Request:
@@ -525,33 +468,8 @@ app.post('/api/createComment', async(req, res, next) =>{
         if(!isValidQuery([query.username, query.postId, query.commentString]))
             throw BackendErrorType.INVALID_QUERY
 
-        // get the user
-        let user = await UserData.findOne({ username: query.username })
-
-        if (user === null || user === undefined)
-            throw BackendErrorType.USER_DNE
-
-        // get the post
-        let post = await PostData.findOne({ _id : query.postId })
-
-        if (post === null || post === undefined)
-            throw BackendErrorType.POST_DNE
-        
-        // create a new comment
-        let comment = await CommentData.create({
-            post_id: query.postId,
-            username: query.username,
-            comment_string: query.commentString,
-            comment_like_list: [],
-            comment_dislike_list: [],
-            date_created: new Date(),
-        })
-
-        // add comment to post
-        post.comments_list.push(comment._id)
-        await post.save()
-
-        res.json({ result: 'Success', message: 'Comment Created' })
+        let result = await createComment(query.username, query.postId, query.commentString)
+        res.json(result)
     }
     catch(error){
         if (error.name === 'CastError') {
@@ -563,13 +481,11 @@ app.post('/api/createComment', async(req, res, next) =>{
 
 });
 
-
 /**
+ * Search query field: { postId }
  * Retrieves the comments associated with the specified post.
- * 
- * @param {string} postId - The ID of the post for which comments are to be retrieved.
- * @returns {Array} - An array containing the comments associated with the specified post.
- * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the post does not exist.
+ * If successful, returns a JSON object with the comments.
+ * If invalid, throws a backend error with an appropriate message.
  * @httpMethod GET
  * @example
  * Request:
@@ -596,14 +512,7 @@ app.get('/api/getComments', async(req, res, next) => {
         if(!isValidQuery([query.postId]))
             throw BackendErrorType.INVALID_QUERY
 
-        let post = await PostData.findOne({ _id : query.postId })
-
-        if(post === null || post === undefined)
-            throw BackendErrorType.POST_DNE
-        
-        let comments = await CommentData.find({ post_id : query.postId })
-            .sort({ date_created: 1 })
-
+        let comments = await getComments(query.postId)
         res.json(comments)
     }
     catch(error){
