@@ -1,14 +1,14 @@
 import express, { query } from "express";
 import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
-import { BackendErrorType } from "./BackendError.js";
+import { BackendErrorType } from "./src/BackendError.js";
 import bodyParser from 'body-parser';
 
 // Import the abstracted helper functions from the other files
-import { searchSpotify } from "./spotify.js";
-import { login, signup } from "./account.js";
-import { feed, createPost, rating, createComment, getComments } from "./posts.js";
-import { profile, follow, search } from "./users.js";
+import { searchSpotify } from "./src/spotify.js";
+import { login, signup } from "./src/account.js";
+import { feed, createPost, rating, createComment, getComments } from "./src/posts.js";
+import { profile, follow, search } from "./src/users.js";
 
 const app = express();
 app.use(cors());
@@ -106,7 +106,7 @@ app.post('/api/signup', async (req, res, next) => {
         if (!isValidQuery([query.firstname, query.lastname, query.username, query.password, query.email]))
             throw BackendErrorType.INVALID_QUERY;
 
-        const responseData = await signup(query.firstname, query.lastname, query.username, query.password, query.email); 
+        const responseData = await signup(query.firstname, query.lastname, query.username, query.password, query.email);
         res.json(responseData);
 
     } catch (error) {
@@ -220,7 +220,7 @@ app.post('/api/follow', async (req, res, next) => {
         if (!isValidQuery([username, userToFollow])) {
             throw BackendErrorType.INVALID_QUERY;
         }
-        
+
         let result = await follow(username, userToFollow);
         res.json(result);
     } catch (error) {
@@ -388,21 +388,21 @@ app.post("/api/Rating", async (req, res, next) => {
  *    }
  * Response (Error): // See BackendError.js for more information
  */
-app.post('/api/createComment', async(req, res, next) =>{
+app.post('/api/createComment', async (req, res, next) => {
     try {
         let query = req.query
 
-        if(!isValidQuery([query.username, query.postId, query.commentString]))
+        if (!isValidQuery([query.username, query.postId, query.commentString]))
             throw BackendErrorType.INVALID_QUERY
 
         let result = await createComment(query.username, query.postId, query.commentString)
         res.json(result)
     }
-    catch(error){
+    catch (error) {
         if (error.name === 'CastError') {
             next(BackendErrorType.POST_DNE)
         } else {
-            next(error); 
+            next(error);
         }
     }
 
@@ -432,21 +432,21 @@ app.post('/api/createComment', async(req, res, next) =>{
  *    ]
  * Response (Error): // See BackendError.js for more information
  */
-app.get('/api/getComments', async(req, res, next) => {
-    try{
+app.get('/api/getComments', async (req, res, next) => {
+    try {
         let query = req.query
 
-        if(!isValidQuery([query.postId]))
+        if (!isValidQuery([query.postId]))
             throw BackendErrorType.INVALID_QUERY
 
         let comments = await getComments(query.postId)
         res.json(comments)
     }
-    catch(error){
+    catch (error) {
         if (error.name === 'CastError') {
             next(BackendErrorType.POST_DNE)
         } else {
-            next(error); 
+            next(error);
         }
     }
 })

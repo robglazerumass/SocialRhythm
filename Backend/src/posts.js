@@ -1,5 +1,5 @@
-import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js";
-import { BackendErrorType } from "./BackendError.js";
+import { UserData, PostData, CommentData } from "../Database/models/DB_Schemas.js";
+import { BackendError, BackendErrorType } from "./BackendError.js";
 
 // This file contains the functions that handle posts, feed, comments, likes, and other related post functionality
 
@@ -12,7 +12,7 @@ import { BackendErrorType } from "./BackendError.js";
  * @returns {Array} - An array of post objects sorted by most recent.
  * @throws {BackendErrorType} - Throws an error if the user does not exist, if the page number is invalid, or if the feed is empty.
  */
-export async function feed(username, xPosts, pageNum){
+export async function feed(username, xPosts, pageNum) {
     let user = await UserData.findOne({ username: username })
 
     if (user === null || user === undefined)
@@ -31,7 +31,7 @@ export async function feed(username, xPosts, pageNum){
         .sort({ date_created: -1 })
         .skip(pageNum * xPosts)
         .limit(xPosts)
-    
+
     // Front-End just wanted us to return the JSON directly to them
     return result
 }
@@ -47,7 +47,7 @@ export async function feed(username, xPosts, pageNum){
  * @returns {JSON} - An object containing a success message if the post was created successfully.
  * @throws {BackendErrorType} - Throws an error if there's an error during post creation.
  */
-export async function createPost(username, title, description, spotify_link, image_url){ 
+export async function createPost(username, title, description, spotify_link, image_url) {
     if (!title || !description)
         throw BackendErrorType.NO_TITLE_OR_DESC;
 
@@ -82,10 +82,10 @@ export async function createPost(username, title, description, spotify_link, ima
  * @param {string} ratingType - Specifies the rating type using either "like" or "dislike"
  * @param {string} username - Specifies the username of the user who is making the rating
  * @param {string} destId - Specifies the "_id" of the post or comment that rating should be added to
- * @returns {json or BackendError} Returns either json declaring success or throws a BackendError on failure 
+ * @returns {json | BackendError} Returns either json declaring success or throws a BackendError on failure 
  * @throws {BackendErrorType} - Throws an error if the request is invalid or if the rating is invalid
  */
-export async function rating(requestType, ratingType, username, destId){
+export async function rating(requestType, ratingType, username, destId) {
     let result, user, dest, likes, dislikes;
     user = await UserData.findOne({ username: username });
 
@@ -167,7 +167,7 @@ export async function rating(requestType, ratingType, username, destId){
  * @throws {BackendErrorType} - Throws an error if the provided query is invalid, if the user or post does not exist,
  *                              or if there's an error during comment creation.
 */
-export async function createComment(username, postId, commentString){
+export async function createComment(username, postId, commentString) {
     // get the user
     let user = await UserData.findOne({ username: username })
 
@@ -175,11 +175,11 @@ export async function createComment(username, postId, commentString){
         throw BackendErrorType.USER_DNE
 
     // get the post
-    let post = await PostData.findOne({ _id : postId })
+    let post = await PostData.findOne({ _id: postId })
 
     if (post === null || post === undefined)
         throw BackendErrorType.POST_DNE
-    
+
     // create a new comment
     let comment = await CommentData.create({
         post_id: postId,
@@ -204,14 +204,14 @@ export async function createComment(username, postId, commentString){
  * @returns {Array} - An array containing the comments associated with the specified post.
  * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the post does not exist.
  */
-export async function getComments(postId){
-    let post = await PostData.findOne({ _id : postId })
+export async function getComments(postId) {
+    let post = await PostData.findOne({ _id: postId })
 
-    if(post === null || post === undefined)
+    if (post === null || post === undefined)
         throw BackendErrorType.POST_DNE
-    
-    let comments = await CommentData.find({ post_id : postId })
+
+    let comments = await CommentData.find({ post_id: postId })
         .sort({ date_created: 1 })
-    
+
     return comments
 }

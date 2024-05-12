@@ -1,4 +1,4 @@
-import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js";
+import { UserData, PostData, CommentData } from "../Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
 
 // This file contains the functions that handles interactions with users, such as searching for users, 
@@ -12,7 +12,7 @@ import { BackendErrorType } from "./BackendError.js";
  * @returns {Object} - An object containing the user's profile information and their associated posts.
  * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the user does not exist.
  */
-export async function profile(username){
+export async function profile(username) {
     let user = await UserData.findOne({ username: username })
 
     if (user === null || user === undefined)
@@ -44,8 +44,8 @@ export async function profile(username){
  * @throws {BackendErrorType} - Throws an error if the user does not exist, if the target user does not exist, 
  *                              if the user is already following the target user, or if the user tries to follow themselves.
 */
-export async function follow(username, userToFollow){
-    
+export async function follow(username, userToFollow) {
+
     if (username === userToFollow) {
         throw BackendErrorType.SELF_FOLLOW;
     }
@@ -83,7 +83,7 @@ export async function follow(username, userToFollow){
  * @returns {Array} - An array containing the users that match the search term.
  * @throws {BackendErrorType} - Throws an error if the search term is empty or if no users are found.
 */
-export async function search(searchTerm){
+export async function search(searchTerm) {
     if (searchTerm == '') {
         throw BackendErrorType.USER_NOT_FOUND;
     }
