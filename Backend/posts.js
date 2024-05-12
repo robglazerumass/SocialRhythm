@@ -150,7 +150,9 @@ export async function rating(requestType, ratingType, username, destId){
         throw BackendErrorType.INVALID_REQUESTTYPE;
     }
 
-    return { result: 'SUCCESS' };
+    result = { result: 'SUCCESS' };
+
+    return result;
 
 }
 

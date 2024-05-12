@@ -1,10 +1,9 @@
 import express, { query } from "express";
 import cors from 'cors';
 import { connect } from './Database/MongoDBServer.js';
-import { UserData, PostData, CommentData } from "./Database/models/DB_Schemas.js";
 import { BackendErrorType } from "./BackendError.js";
-import { ObjectId } from "mongodb";
 import bodyParser from 'body-parser';
+
 // Import the abstracted helper functions from the other files
 import { searchSpotify } from "./spotify.js";
 import { login, signup } from "./account.js";
