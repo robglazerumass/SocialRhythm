@@ -1,5 +1,5 @@
 import { UserData, PostData, CommentData } from "../Database/models/DB_Schemas.js";
-import { BackendError, BackendErrorType } from "./BackendError.js";
+import { BackendErrorType } from "./BackendError.js";
 
 // This file contains the functions that handle posts, feed, comments, likes, and other related post functionality
 
@@ -82,7 +82,7 @@ export async function createPost(username, title, description, spotify_link, ima
  * @param {string} ratingType - Specifies the rating type using either "like" or "dislike"
  * @param {string} username - Specifies the username of the user who is making the rating
  * @param {string} destId - Specifies the "_id" of the post or comment that rating should be added to
- * @returns {json | BackendError} Returns either json declaring success or throws a BackendError on failure 
+ * @returns {Object | BackendErrorType} Returns either JSON declaring success or throws a BackendError on failure 
  * @throws {BackendErrorType} - Throws an error if the request is invalid or if the rating is invalid
  */
 export async function rating(requestType, ratingType, username, destId) {

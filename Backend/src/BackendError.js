@@ -1,8 +1,6 @@
 /**
  * Error class that includes a status code (int) and message (string).
  * 
- * @example
- * 
  * if (something_went_wrong)
  *      throw new BackendError(101, "Something went wrong!"),
  */
