@@ -6,6 +6,7 @@ import { BackendErrorType } from "./BackendError.js";
 import { ObjectId } from "mongodb";
 import bodyParser from 'body-parser';
 import { searchSpotify } from "./spotify.js";
+import { login, signup } from "./account.js";
 
 const app = express();
 app.use(cors());
@@ -36,37 +37,19 @@ function validateRating(user, post, ratingType) {
     }
 }
 
-
 /**
- * Retrieves user account information based on the provided username and password.
- * 
- * @param {string} username - The username of the user.
- * @param {string} password - The password of the user.
- * @returns {JSON} - An object containing the result of the login operation and user account information.
- * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the login credentials are incorrect.
- * @httpMethod GET
- * @example
- * Request:
- *    GET /api/login?username=johndoe&password=examplepassword
- * Response (Success):
- *    {
- *      "result": "SUCCESS",
- *      "account_info": "5ff8ac275c821433f8f59c29" // Example ObjectId
- *    }
- * Response (Error): // See BackendError.js for more information
- */
+ * Search query field: { username, password }
+ * Login API endpoint.
+ * Validates the username and password provided in the query parameters.
+ * If valid, returns a JSON object with a success message and account information.
+ * If invalid, throws a backend error with an appropriate message.
+*/
 app.get('/api/login', async (req, res, next) => {
     try {
         let query = req.query;
         if (!isValidQuery([query.username, query.password]))
             throw BackendErrorType.INVALID_QUERY;
-
-        let result = await UserData.findOne({ username: query.username, password: query.password });
-
-        if (result == null)
-            throw BackendErrorType.INVALID_LOGIN;
-
-        const responseData = { result: 'SUCCESS', account_info: result._id };
+        let responseData = await login(query.username, query.password);
         res.json(responseData);
 
     } catch (error) {
@@ -75,53 +58,20 @@ app.get('/api/login', async (req, res, next) => {
 });
 
 /**
- * Creates a new user account based on the provided information.
+ * Signup query field: { firstname, lastname, username, password, email }
+ * Signup API endpoint.
+ * Validates the query parameters and creates a new user account.
+ * If successful, returns a JSON object with a success message.
+ * If invalid, throws a backend error with an appropriate message.
  * 
- * @param {string} firstname - The first name of the user.
- * @param {string} lastname - The last name of the user.
- * @param {string} username - The desired username for the new account.
- * @param {string} password - The password for the new account.
- * @param {string} email - The email address of the user.
- * @returns {Object} - An object containing the result of the signup operation and a success message if successful.
- * @throws {BackendErrorType} - Throws an error if the provided query is invalid, if the username already exists,
- *                              or if there's an error during user creation.
- * @httpMethod POST
- * @example
- * Request:
- *    POST /api/signup?firstname=John&lastname=Doe&username=johndoe&password=examplepassword&email=johndoe@example.com
- * Response (Success):
- *    {
- *      "result": "SUCCESS",
- *      "message": "New Account Created"
- *    }
- * Response (Error): // See BackendError.js for more information
- */
+*/
 app.post('/api/signup', async (req, res, next) => {
     try {
         let query = req.query;
         if (!isValidQuery([query.firstname, query.lastname, query.username, query.password, query.email]))
             throw BackendErrorType.INVALID_QUERY;
 
-        let result = await UserData.findOne({ username: query.username })
-
-        if (result != null)
-            throw BackendErrorType.USERNAME_EXISTS;
-
-        // create a new user
-        const user = await UserData.create({
-            user_first_name: query.firstname,
-            user_last_name: query.lastname,
-            user_email: query.email,
-            username: query.username,
-            password: query.password,
-            user_bio: "",
-            user_following_list: [],
-            user_follower_list: [],
-            user_post_list: [],
-            date_created: new Date(),
-        });
-
-        const responseData = { result: 'SUCCESS', message: 'New Account Created' };
+        const responseData = await signup(query.firstname, query.lastname, query.username, query.password, query.email); 
         res.json(responseData);
 
     } catch (error) {
