@@ -1,6 +1,6 @@
 import FeedImage from "../components/FeedImage";
 import Interaction from "../components/Interaction";
-import MenuBar from "../components/menubar";
+import MenuBar from "../components/MenuBar";
 import postMockData from "../mockData/postMockData";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -19,7 +19,7 @@ function Post({
 	img: string;
 }) {
 	return (
-		<div className="post-content w-2/5 bg-dark-purple my-10 px-10 rounded-lg">
+		<div className="post-content w-2/5 bg-primary bg-opacity-10 my-10 px-10 rounded-lg drop-shadow-lg">
 			<div className="top-half flex flex-col justify-center gap-5 py-5 w-full box-border">
 				<div className="flex flex-row gap-4">
 					<div className="avatar">
@@ -47,15 +47,8 @@ function Post({
 }
 
 export default function Feed() {
-	/*
-	const defaultUsername = "jane123";
-	const defaultTitle = "OMG it's here!";
-	const defaultImg =
-		"https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
-	const defaultDesc =
-		"I can't believe that it's here! ljdaskljfkldsajf;sdadsjf;sldajfkl;sdajfkdsjfklasdjflkjdsaklfjdsljfklsdajfklsdajfklsdjafk;ldsjfkl;sdjafkljsadfkljsdflkjsdalkfjklsdajflk;dsajf";
-		*/
 	const [feedData, setFeedData] = useState(postMockData);
+	const [showSearchModal, setShowSearchModal] = useState(false)
 	const { state } = useLocation();
 	const { username } = state;
 	useEffect(() => {
@@ -63,17 +56,17 @@ export default function Feed() {
 			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
 			setFeedData(data);
+			console.log(data)
 		}
 		fetchPosts();
 	}, [username]);
 	return (
 		<div className="homepage inline-flex flex-row w-screen">
-			<MenuBar />
+			<MenuBar setShowSearchModal={setShowSearchModal} />
 			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
-					className="btn bg-purple-btn border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"
-					onClick={() =>
-						document.getElementById("create_post_modal").showModal()
+					className="btn bg-primary bg-opacity-30 border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"
+					onClick={() => {document.getElementById("create_post_modal").showModal()}
 					}>
 					{/* <a
 							className="flex justify-start gap-7 text-black"

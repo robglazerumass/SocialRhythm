@@ -29,15 +29,21 @@ async function getToken() {
 }
 
 /**
- * @param {string} query The contents of the user's search.
- * @param {[string]} types Refers to the types of data to be requested. Valid inputs for this app will be "artist", "album", "track". 
- * @param {number} limit Limit for number of responses.
- * 
  * @typedef {Object} SpotifyQueryResponse
  * @property {Array?} albums - A list of albums returned
  * @property {Array?} artists - A list of artists returned
  * @property {Array?} track - A list of tracks returned
- * @returns {SpotifyQueryResponse} See https://developer.spotify.com/documentation/web-api/reference/search
+ */
+
+/**
+ * Searches Spotify for relevant music content based on search parameters.
+ * Uses Spotify's API.
+ * 
+ * @param {string} query The string contents of the user's search.
+ * @param {Array} types Refers to the types of data to be requested. Valid inputs for this app will be "artist", "album", "track". 
+ * @param {number} limit Limit for number of responses.
+ * 
+ * @returns {SpotifyQueryResponse} See [Spotify's page]{@link https://developer.spotify.com/documentation/web-api/reference/search} for reference of return Objects.
  */
 export async function searchSpotify(query, types, limit) {
     const urlString = "https://api.spotify.com/v1/search";
