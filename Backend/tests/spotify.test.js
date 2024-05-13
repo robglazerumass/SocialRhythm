@@ -1,6 +1,28 @@
 import { searchSpotify } from "../src/spotify"
+import { start, stop } from "../index"
+import { getRequest } from "./utility";
+
+beforeAll(async () => {
+    await start();
+});
+
+afterAll(async () => {
+    await stop();
+});
 
 describe("Spotify search function", () => {
+    it("Test API integration", async () => {
+        const response = await getRequest("/searchContent", {
+            searchTerm: "taylor swift",
+            type: "artist",
+            limit: 1
+        });
+
+        expect(response).not.toEqual(undefined)
+        expect(response.artists.items.length).toEqual(1);
+        expect(response.albums).toEqual(undefined);
+    });
+
     it("Test limited search", async () => {
         const maxLimit = 51;
         for (let i = 1; i <= maxLimit; i += 20) {
@@ -13,7 +35,7 @@ describe("Spotify search function", () => {
 
     it("Response contains necessary information", async () => {
         const response = await searchSpotify("Amr Diab", "artist,track", 1);
-        
+
         const artistProps = ["name", "genres", "images", "external_urls"]
         artistProps.forEach(p => expect(response.artists.items[0]).toHaveProperty(p))
 
