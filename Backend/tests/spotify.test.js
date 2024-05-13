@@ -1,4 +1,4 @@
-import { searchSpotify } from "../spotify"
+import { searchSpotify } from "../src/spotify"
 
 describe("Spotify search function", () => {
     it("Test limited search", async () => {
