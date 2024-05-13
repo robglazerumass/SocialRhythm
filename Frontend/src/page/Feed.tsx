@@ -1,6 +1,6 @@
 import FeedImage from "../components/FeedImage";
 import Interaction from "../components/Interaction";
-import MenuBar from "../components/MenuBar";
+import MenuBar from "../components/menubar";
 import postMockData from "../mockData/postMockData";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -48,7 +48,7 @@ function Post({
 
 export default function Feed() {
 	const [feedData, setFeedData] = useState(postMockData);
-	const [showSearchModal, setShowSearchModal] = useState(false)
+	const [showSearchModal, setShowSearchModal] = useState(false);
 	const { state } = useLocation();
 	const { username } = state;
 	useEffect(() => {
@@ -56,7 +56,7 @@ export default function Feed() {
 			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
 			setFeedData(data);
-			console.log(data)
+			console.log(data);
 		}
 		fetchPosts();
 	}, [username]);
@@ -66,8 +66,9 @@ export default function Feed() {
 			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
 					className="btn bg-primary bg-opacity-30 border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"
-					onClick={() => {document.getElementById("create_post_modal").showModal()}
-					}>
+					onClick={() => {
+						document.getElementById("create_post_modal").showModal();
+					}}>
 					{/* <a
 							className="flex justify-start gap-7 text-black"
 							// onClick={() =>
