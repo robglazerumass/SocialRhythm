@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const db = process.env.JEST_WORKER_ID === undefined ? "SocialRhythmDB" : "SocialRhythmDBTest"
+const db = process.env.JEST_WORKER_ID === undefined ? "SocialRhythmnDB" : "SocialRhythmnDBTest"
 const password = process.env.DB_PASSWORD;
 const uri = 'mongodb+srv://gouweijan:' + password + `@socialrhythmdb.fupvhxa.mongodb.net/${db}?retryWrites=true&w=majority&appName=SocialRhythmDBTest`;
 
