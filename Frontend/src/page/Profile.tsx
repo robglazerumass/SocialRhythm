@@ -12,7 +12,7 @@ function Profile() {
 				<MenuBar />
 			</div>
 			<div className="h-[95%] m-4 flex flex-row w-full gap-3">
-				<div className="profile-left-container card glass w-2/5 flex flex-col">
+				<div className="profile-left-container card bg-dark-purple w-2/5 flex flex-col">
 					<figure className="px-10 pt-8">
 						<img src={profileLink} className="rounded-xl h-5/6"></img>
 					</figure>
@@ -20,7 +20,7 @@ function Profile() {
 						<div className="card-title"></div>
 					</div>
 				</div>
-				<div className="profile-right-container card glass w-full"></div>
+				<div className="profile-right-container card bg-dark-purple w-full"></div>
 			</div>
 		</div>
 	);
