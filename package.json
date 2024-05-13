@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "node-fetch": "^3.3.2",
-    "react-toastify": "^10.0.5"
-  }
-}
