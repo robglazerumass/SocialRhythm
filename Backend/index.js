@@ -301,8 +301,6 @@ app.get("/api/searchContent", async (req, res, next) => {
     }
 });
 
-// Create Post body fields: { username, title, description, spotify_link(OPTIONAL), image_url(OPTIONAL) }
-// takes in a request body with above fields and returns a JSON Success or throws a Backend Error
 
 /**
  * Create Post body fields: { username, title, description, spotify_link(OPTIONAL), image_url(OPTIONAL) }
@@ -373,7 +371,7 @@ app.post("/api/Rating", async (req, res, next) => {
 
 
 /**
- * Search query field: { username, password }
+ * Search query field: { username, postId, commentString }
  * Creates a new comment on a post specified by the provided postId.
  * If successful, returns a JSON object with a success message.
  * If invalid, throws a backend error with an appropriate message.
