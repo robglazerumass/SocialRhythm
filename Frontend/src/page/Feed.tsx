@@ -2,7 +2,7 @@ import FeedImage from "../components/FeedImage";
 import Interaction from "../components/Interaction";
 import MenuBar from "../components/MenuBar";
 import postMockData from "../mockData/postMockData";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import createPostForm from "../components/createPostForm";
@@ -28,7 +28,9 @@ function Post({
 						</div>
 					</div>
 					<div className="min-h-full flex flex-col justify-center text-xl font-bold">
-						<p>{username}</p>
+						<p>
+							<Link to={`../user/${username}`}>{username}</Link>
+						</p>
 					</div>
 				</div>
 				<div className="flex flex-col gap-4">
@@ -53,7 +55,6 @@ export default function Feed() {
 		async function fetchPosts() {
 			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
-			console.log(data);
 			setFeedData(data);
 		}
 		fetchPosts();
