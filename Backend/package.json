@@ -25,6 +25,7 @@
         "express": "^4.19.2",
         "jsdoc": "^4.0.3",
         "mongoose": "^8.2.4",
+        "node-fetch": "^3.3.2",
         "react-toastify": "^10.0.5"
     },
     "devDependencies": {
