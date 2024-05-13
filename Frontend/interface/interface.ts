@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
-interface ProfileType {
+export interface ProfileType {
+	[x: string]: any;
 	username: string;
 	bio: string;
 	firstName: string;
@@ -23,10 +24,8 @@ export interface PostType {
 }
 
 export interface MyBtnType {
-	name: string;
 	classNameStyle: string;
-	handleClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
-	children: ReactNode;
+	eventClick: (() => void) | undefined;
+	children: ReactNode | undefined;
+	name: string;
 }
-
-export default ProfileType;

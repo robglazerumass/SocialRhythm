@@ -56,7 +56,7 @@ function Login() {
 
 	return (
 		<div className="flex items-center justify-center h-screen">
-			<div className="flex flex-row bg-base-100 w-full shadow-xl h-5/6 lg:w-5/6 rounded-lg">
+			<div className="card glass flex flex-row w-full shadow-xl h-[90%] lg:w-[90%] rounded-lg">
 				<div className="flex w-0 lg:w-3/5">
 					<img
 						className="rounded-l-lg object-cover"
@@ -66,18 +66,20 @@ function Login() {
 				</div>
 				<div className="card-body lg:w-96 flex justify-center">
 					<h2 className="card-title text-3xl">Login</h2>
-					<div className="flex flex-col gap-3">
+					<div className="flex flex-col gap-6">
 						<form className="flex flex-col gap-2" onSubmit={handleSubmit}>
 							<div className="flex flex-col gap-2">
 								<div>
 									<div className="label">
-										<span className="label-text text-md">Username</span>
+										<span className="label-text text-md text-white">
+											Username
+										</span>
 									</div>
-									<label className="input input-bordered flex items-center gap-2">
+									<label className="form-control w-full">
 										<input
 											type="text"
 											placeholder="Type here"
-											className="grow"
+											className="input input-bordered input-primary flex items-center gap-2 bg-transparent border-gray-400 focus:border-blue-500 "
 											name="username"
 											value={loginForm.username}
 											onChange={handleChange}></input>
@@ -85,9 +87,11 @@ function Login() {
 								</div>
 								<div>
 									<div className="label">
-										<span className="label-text text-md">Password</span>
+										<span className="label-text text-md text-white">
+											Password
+										</span>
 									</div>
-									<label className="input input-bordered flex items-center gap-2 pr-0">
+									<label className="input flex items-center input-primary gap-2 bg-transparent border-gray-400 focus:border-blue-500 ">
 										<input
 											type={showPassword ? "text" : "password"}
 											placeholder="Type here"
@@ -141,7 +145,7 @@ function Login() {
 											type="checkbox"
 											className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
 										/>
-										<span className="label-text">Remember me</span>
+										<span className="label-text text-white">Remember me</span>
 									</div>
 									<button className="btn btn-link pr-0">
 										Forgot your password?
