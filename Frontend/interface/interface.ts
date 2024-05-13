@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 interface ProfileType {
 	username: string;
 	bio: string;
@@ -8,7 +10,7 @@ interface ProfileType {
 	postList: PostType[];
 }
 
-interface PostType {
+export interface PostType {
 	username: string;
 	title: string;
 	description: string;
@@ -19,3 +21,12 @@ interface PostType {
 	dateCreated: Date;
 	spotifyLink: string;
 }
+
+export interface MyBtnType {
+	name: string;
+	classNameStyle: string;
+	handleClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
+	children: ReactNode;
+}
+
+export default ProfileType;
