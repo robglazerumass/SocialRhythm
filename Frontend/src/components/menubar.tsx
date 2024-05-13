@@ -1,30 +1,37 @@
-function MenuBar() {
+import { ReactNode } from "react";
+import { MagnifyingGlassIcon, UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
+
+function MenuItems({ icon, name }: { icon: ReactNode; name: string }) {
 	return (
-		<div className="drawer">
-			<input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-			<div className="drawer-content flex flex-col items-center justify-center">
-				{/* Page content here */}
-			</div>
-			<div className="drawer-side z-10">
-				<label
-					htmlFor="my-drawer-2"
-					aria-label="close sidebar"
-					className="drawer-overlay"></label>
-				<ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-					{/* Sidebar content here */}
-					<li>
-						<a>Search</a>
-					</li>
-					<li>
-						<a>Friends</a>
-					</li>
-					<li>
-						<a>Trending</a>
-					</li>
-				</ul>
-			</div>
+		<li>
+			<a className="flex justify-center gap-2 text-white flex-col p-0 items-center">
+				{icon}
+				{name}
+			</a>
+		</li>
+	);
+}
+
+export default function MenuBar() {
+	return (
+		<div className="fixed z-10 left-10 h-screen flex flex-col justify-center w-1/12">
+			<ul className="menu h-2/5 flex bg-primary bg-opacity-30 justify-center rounded-full w-8/12">
+				<div className="h-4/5 flex flex-col justify-between w-full">
+				<MenuItems
+						icon={ <MagnifyingGlassIcon className="w-6 h-6"/> }
+						name="Search"
+					/>
+					<MenuItems
+						icon={ <UserGroupIcon className="h-6 w-6" />}
+						name="Friends"
+					/>
+					<MenuItems
+						icon={ <UserIcon className="h-6 w-6"/>}
+						name="Trending"
+					/>
+				</div>
+			</ul>
 		</div>
 	);
 }
 
-export default MenuBar;
