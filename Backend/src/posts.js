@@ -18,7 +18,7 @@ export async function feed(username, xPosts, pageNum) {
     if (user === null || user === undefined)
         throw BackendErrorType.USER_DNE
 
-    if (pageNum < 0)
+    if (pageNum < 0 || xPosts < 0)
         throw BackendErrorType.INVALID_FEED_PAGE
 
     const followingList = user.user_following_list

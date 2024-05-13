@@ -2,6 +2,7 @@ import { feed } from "../src/posts";
 import { start, stop } from "../index";
 import { getRequest } from "./utility";
 import { BackendErrorType } from "../src/BackendError";
+import { response } from "express";
 
 beforeAll(async () => {
     await start();
@@ -39,7 +40,7 @@ describe("Feed Display function", () => {
         }
     });
 
-    it("Test Invalid Page Number", async () => {
+    it("Page Number Cannot Be Negative", async () => {
         try {
             await feed("alice123", 5, -1);
             throw new Error("Should Not Reach Here");
@@ -48,7 +49,7 @@ describe("Feed Display function", () => {
         }
     });
 
-    it("Test Invalid Post Count", async () => {
+    it("Post Count Cannot Be Negative", async () => {
         try {
             await feed("alice123", -1, 0);
             throw new Error("Should Not Reach Here");
@@ -57,25 +58,28 @@ describe("Feed Display function", () => {
         }
     });
 
-    it("Test Invalid Post Count", async () => {
+    it("Post Count Can Be Zero", async () => {
         try {
             await feed("alice123", 0, 0);
-            throw new Error("Should Not Reach Here");
+            
         } catch (e) {
-
-            expect(e).toEqual(BackendErrorType.INVALID_FEED_PAGE);
+            throw new Error("Should Not Reach Here");
         }
     });
 
-    it("Test Invalid Post Count", async () => {
-        try {
-            await feed("alice123", 101, 0);
-            throw new Error("Should Not Reach Here");
-        } catch (e) {
-            expect(e).toEqual(BackendErrorType.INVALID_FEED_PAGE);
-        }
+    it("Post Count Can Be Very High", async () => {
+        const response = await feed("alice123", 101, 0);  
+
+        expect(response).not.toEqual(undefined)
+        expect(response.length).toBeLessThanOrEqual(101);   
+            
     });
+    it("Page Count Can Be Very High", async () => {
+        const response = await feed("alice123", 5, 101);  
 
-
+        expect(response).not.toEqual(undefined)
+        // There should be nothing on this page
+        expect(response.length).toBeLessThanOrEqual(0);
+    });
 
 });
