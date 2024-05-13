@@ -56,6 +56,7 @@ export default function Feed() {
 			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
 			setFeedData(data);
+			console.log(data)
 		}
 		fetchPosts();
 	}, [username]);

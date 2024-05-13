@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import MenuBar from "../components/menubar";
+import MenuBar from "../components/MenuBar";
 
 function Profile() {
 	const profileLink =
