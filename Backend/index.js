@@ -115,7 +115,7 @@ app.post('/api/signup', async (req, res, next) => {
 })
 
 /**
- * Search query field: { username, password }
+ * Search query field: { username, xPosts, pageNum}
  * Retrieves a list of posts for the user's feed based on the provided parameters.
  * If successful, returns a JSON object with the user's feed.
  * If invalid, throws a backend error with an appropriate message.
