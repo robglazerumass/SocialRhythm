@@ -36,6 +36,8 @@ The code is primarily split into two pieces, the Frontend and the Backend
 The Backend includes everything needed for the database, including schema and connection setup. Along with that it includes API endpoints that recieve and handle requests from the Frontend, along with custom Error handling. Finally the Backend contains unit tests that utilize jest to ensure that the code functions as needed. 
 
 ### Frontend
+The Frontend is set up and runs in real-time in the development environment using Vite. It includes an interface for type declaring, the components folder that includes aspects of each feature, custom hooks, a service folder for authentication, notification pop-ups, etc., and a pages folder for each page. The routing system is included in the "main.tsx", which is also the file that Vite uses. 
+
 ## Run Locally
 Before doing anything else make sure that you have git and npm installed on your local machine. Once that is complete continue with the following instructions:
 
