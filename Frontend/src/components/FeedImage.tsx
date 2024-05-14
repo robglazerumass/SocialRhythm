@@ -9,7 +9,8 @@ export default function FeedImage({imageUrl, spotifyUrl}: Readonly<{imageUrl: st
 			</div>
 			<a
 				className="spotify-link absolute bottom-5 right-5"
-				href={spotifyUrl?.length > 0 ? spotifyUrl : "https://www.spotify.com"}>
+				href={spotifyUrl?.length > 0 ? spotifyUrl : "https://www.spotify.com"}
+				target="_blank">
 				<button className="spotify-btn bg-[#191414] rounded-full flex items-center justify-center gap-3 text-[#1DB954] border-[#1DB954] h-10 w-10 lg:w-auto">
 					<img
 						src={spotifyLogo}

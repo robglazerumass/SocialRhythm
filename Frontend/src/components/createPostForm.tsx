@@ -1,7 +1,6 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import Post from "./Post";
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FormEvent, useEffect, useState } from "react";
 import Preview from "./Preview";
 import axios from "axios";
 
@@ -30,10 +29,13 @@ export default function CreatePostForm() {
 	});
 	const [spotifyQuery, setSpotifyQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<Track[]>([]);
+	const [hasError, setHasError] = useState(false)
+	const navigate = useNavigate()
 
-	const SEARCH_INTERVAL = 1500; // after the user stops typing for x seconds, search spotify
+	const SEARCH_INTERVAL = 1000; // after the user stops typing for x seconds, search spotify
 
 	const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+		setHasError(false)
 		setPostData((prev) => ({
 			...prev,
 			[(event.target as HTMLInputElement).name]: (
@@ -42,8 +44,23 @@ export default function CreatePostForm() {
 		}));
 	};
 
+	const handlePost= async (event: FormEvent<SubmitEvent>) => {
+		event.preventDefault()
+		console.log("Here")
+		try {
+			setHasError(false)
+			const result = await axios.post("http://localhost:3000/api/createPost", postData)
+			if(result.data.result === "SUCCESS")
+				(document.getElementById("create_post_modal") as HTMLDialogElement).close();
+
+		} catch {
+			setHasError(true)
+		}
+	}
+
 	useEffect(() => {
 		const waitToSearch = setTimeout(async () => {
+			setHasError(false)
 			try {
 				if (spotifyQuery.length > 0) {
 					console.log(`searching ... ${spotifyQuery}`);
@@ -61,7 +78,7 @@ export default function CreatePostForm() {
 	}, [spotifyQuery]);
 
 	return (
-		<div className="modal-box flex flex-col gap-4 max-w-[1000px] h-4/5">
+		<div id="create-post-modal-box" className="modal-box flex flex-col gap-4 max-w-[1000px] h-4/5">
 			<div className="modal-action m-0 p-0 absolute top-4 right-4">
 				<form
 					method="dialog"
@@ -79,11 +96,12 @@ export default function CreatePostForm() {
 					description={postData.description}
 					img_url={postData.image_url}
 					spotify_url={postData.spotify_link}
-					spotify_audio_link=""
+					spotify_audio_link={postData.audio_prev_link}
 				/>
 				<form
 					id="create-post-form"
 					className="flex flex-col gap-4 w-5/12 h-full"
+					onSubmit={handlePost}
 				>
 					<input
 						className="h-12 bg-transparent border-2 border-purple-400 border-opacity-50 rounded-md p-4"
@@ -157,7 +175,10 @@ export default function CreatePostForm() {
 							))}
 						</ul>
 					) : (
-						<></>
+						<div>
+						<button className="bg-primary text-black h-12 w-full" type="submit">Post</button>
+						{hasError ? <p className="m-0 p-0 text-sm text-red-300">An error occurred. Try again in a few seconds...</p>: <></>}
+						</div>
 					)}
 				</form>
 			</div>

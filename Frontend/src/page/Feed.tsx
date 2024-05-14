@@ -18,7 +18,6 @@ interface Post {
 	spotify_link: string;
 }
 
-
 export default function Feed() {
 	const [feedData, setFeedData] = useState([]);
 	const { state } = useLocation();
@@ -37,15 +36,22 @@ export default function Feed() {
 			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
 					className="btn bg-primary bg-opacity-30 border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"
-					onClick={() => {(document.getElementById("create_post_modal") as HTMLDialogElement)?.showModal()}
-					}>
+					onClick={() => {
+						(
+							document.getElementById(
+								"create_post_modal"
+							) as HTMLDialogElement
+						)?.showModal();
+					}}
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
 						strokeWidth={1.5}
 						stroke="currentColor"
-						className="w-6 h-6">
+						className="w-6 h-6"
+					>
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"
@@ -55,10 +61,10 @@ export default function Feed() {
 					Create Post
 				</button>
 				<dialog id="create_post_modal" className="modal w-full">
-					<CreatePostForm/>
-					<form method="dialog" className="modal-backdrop">
-					<button className="opacity-0">close</button>
-				</form>
+					<CreatePostForm />
+					{/* <form method="dialog" className="modal-backdrop">
+						<button className="opacity-0">close</button>
+					</form> */}
 				</dialog>
 				<div className="post-container w-full flex flex-col items-center">
 					{feedData.map((post: Post) => (

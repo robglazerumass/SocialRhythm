@@ -1,3 +1,4 @@
+import { PlayCircleIcon } from "@heroicons/react/24/outline";
 import FeedImage from "./FeedImage";
 
 interface PostPropsType {
@@ -15,6 +16,7 @@ export default function Preview({
     spotify_url,
     spotify_audio_link
 }: PostPropsType) {
+
 	return (
 		<div className="preview-content w-full bg-primary bg-opacity-10 px-4 flex flex-col items-center justify-center rounded-lg drop-shadow-lg">
 			<div className="top-half flex flex-col justify-center gap-5 py-3 w-full box-border">
@@ -25,8 +27,10 @@ export default function Preview({
 					</p>
 				</div>
 			</div>
-			<div className="h-full overflow-y-visible w-full flex flex-col items-center box-border">
+			<div className="h-full overflow-y-visible w-full flex flex-col items-center box-border justify-center">
 				<FeedImage imageUrl={img_url} spotifyUrl={spotify_url}/>
+                <audio controls src={spotify_audio_link}
+                className="absolute"></audio>
 			</div>
 		</div>
 	);
