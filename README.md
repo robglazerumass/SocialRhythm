@@ -73,6 +73,12 @@ To run the Backend use:
 ```bash
   npm start
 ```
+To build and open docs use:
+```
+npm run docs
+```
+> **_NOTE:_**  *For Windows, use `npm run docs:windows`.*
+
 In the second terminal:
 
 Go to the Frontend directory 
