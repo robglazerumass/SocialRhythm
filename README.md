@@ -74,8 +74,8 @@ To run the Backend use:
   npm start
 ```
 To build and open docs use:
-```
-npm run docs
+```bash
+  npm run docs
 ```
 > **_NOTE:_**  *For Windows, use `npm run docs:windows`.*
 
@@ -103,7 +103,7 @@ To run tests, go the the Backend directory and run the following command
 ```bash
   npm test
 ```
-
+> **_NOTE:_**  *For Windows, use `npm run test:windows`.*
 
 ## Environment Variables
 
