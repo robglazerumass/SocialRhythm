@@ -326,7 +326,6 @@ app.get("/api/searchContent", async (req, res, next) => {
  * 
  */
 app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
-    console.log(req.body);
     try {
         let body = req.body;
         if (!isValidQuery([body.username, body.title, body.description]))
