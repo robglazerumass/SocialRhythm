@@ -21,8 +21,6 @@ describe("Feed Display function", () => {
         });
         expect(response).not.toEqual(undefined)
         expect(response.length).toBeLessThanOrEqual(5);
-        
-
     });
 
     it("Test Helper Function", async () => {
