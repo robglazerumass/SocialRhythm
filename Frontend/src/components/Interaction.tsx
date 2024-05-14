@@ -1,17 +1,24 @@
-import React from "react";
 import {
 	HandThumbUpIcon,
 	HandThumbDownIcon,
-	ChatBubbleOvalLeftIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import CommentModal from "./CommentModal";
 
-export default function Interaction() {
+export default function Interaction({postId, comments_list, likes, dislikes}) {
 	const [activeElementId, setActiveElementId] = useState("");
 
-	function handleCommentModal(){
-		return (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()
+	async function handleCommentModal() {
+		// try{
+		// 	const res = await axios.get(`http://localhost:3000/api/getComments?postId=${postId}`)
+		// 	setComments(res.data)
+		// 	console.log(res.data)
+		// } catch(error){
+		// 	console.log(error.message)
+		// }
+		return (
+			document.getElementById("comment-popup") as HTMLDialogElement
+		).showModal();
 	}
 
     const handleCLick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -26,27 +33,30 @@ export default function Interaction() {
 	return (
 		<div className="interaction-row flex flex-row justify-between py-6 w-full">
 			<div className="like-dislike-div flex gap-4">
-				<button className={`like-btn  bg-opacity-30 flex items-center ${getBgColor("likes")}`}
+				<button className={`like-btn bg-purple-200 bg-opacity-20 flex items-center ${getBgColor("likes")}`}
                 id="likes"
                 onClick={handleCLick}>
 					<HandThumbUpIcon className="h-6 inline" />
 					<span className="px-2">&middot;</span>
-					<span>2.3M</span>
+					<span>{likes.length}</span>
 				</button>
-				<button className={`dislike-btn bg-neutral-600 bg-opacity-30 flex items-center ${getBgColor("dislikes")}`}
+				<button className={`dislike-btn bg-purple-200 bg-opacity-20 flex items-center ${getBgColor("dislikes")}`}
                 id="dislikes"
                 onClick={handleCLick}>
 					<HandThumbDownIcon className="h-6 inline" />
 					<span className="px-2">&middot;</span>
-					<span>20k</span>
+					<span>{dislikes.length}</span>
 				</button>
 			</div>
-			{/* <button id="comments" className={`bg-neutral-600 bg-opacity-30 flex items-center gap-2  ${getBgColor("comments")}`}
-            onClick={handleCLick}>
+			{/* <button
+				id="comments"
+				className={`bg-purple-200 bg-opacity-20 flex items-center justify-center gap-2 w-48`}
+				onClick={handleCommentModal}
+			>
 				<ChatBubbleOvalLeftIcon className="h-6" />
-				<span> 240k Comments</span>
+				<span>{comments_list.length}</span>
 			</button> */}
-			<CommentModal/>
+			<CommentModal postId={postId} comment_count={comments_list.length}/>
 		</div>
 	);
 }
