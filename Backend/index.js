@@ -1,14 +1,14 @@
 import express, { query } from "express";
 import cors from 'cors';
-import { connect } from './Database/MongoDBServer.js';
+import { connect, disconnect } from './Database/MongoDBServer.js';
 import { BackendErrorType } from "./src/BackendError.js";
 import bodyParser from 'body-parser';
 
 // Import the abstracted helper functions from the other files
 import { searchSpotify } from "./src/spotify.js";
 import { login, signup } from "./src/account.js";
-import { feed, createPost, rating, createComment, getComments } from "./src/posts.js";
-import { profile, follow, search } from "./src/users.js";
+import { feed, createPost, deletePost, rating, createComment, getComments } from "./src/posts.js";
+import { profile, follow, unfollow, search } from "./src/users.js";
 
 const app = express();
 app.use(cors());
@@ -228,6 +228,36 @@ app.post('/api/follow', async (req, res, next) => {
     }
 });
 
+/**
+ * Search query field: { username, userToUnfollow }
+ * User with the provided username unfollows the user with the provided userToUnfollow.
+ * If successful, returns a JSON object with a success message if the user has unfollowed the target user.
+ * If invalid, throws a backend error with an appropriate message.
+ * @httpMethod POST
+ * @example
+ * Request:
+ *   POST /api/unfollow?username=johndoe&userToUnfollow=janedoe
+ * Response (Success):
+ *  {
+ *  "result": "SUCCESS"
+ * }
+ * Response (Error): // See BackendError.js for more information
+*/
+app.post('/api/unfollow', async (req, res, next) => {
+    try {
+        let { username, userToUnfollow } = req.query;
+
+        if (!isValidQuery([username, userToUnfollow])) {
+            throw BackendErrorType.INVALID_QUERY;
+        }
+
+        let result = await unfollow(username, userToUnfollow);
+        res.json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
 //Search query field: {searchTerm}
 // takes in a query with above field and returns an array of JSON results or throws a Backend Error
 //The following endpoint recieves a searchTerm related to a user and queries the database using
@@ -340,6 +370,35 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
     }
 });
 
+/**
+ * Search query field: { postId }
+ * Deletes a post with the provided postId.
+ * If successful, returns a JSON object with a success message if the post is deleted successfully.
+ * If invalid, throws a backend error with an appropriate message.
+ * @httpMethod DELETE
+ * @example
+ * Request:
+ *   DELETE /api/deletePost?postId=60a5c3f1d9b2a52a3c8d0f1c
+ * Response (Success):
+ *  {
+ *    "message": "Post with ID 60a5c3f1d9b2a52a3c8d0f1c has been deleted"
+ *  }
+ * Response (Error): // See BackendError.js for more information
+*/
+app.delete('/api/deletePost', async (req, res, next) => {
+    try {
+        let { postId } = req.query;
+
+        if (!isValidQuery([postId])) {
+            throw BackendErrorType.INVALID_QUERY;
+        }
+
+        let result = await deletePost(postId);
+        res.json(result);
+    } catch (error) {
+        next(error);
+    }
+});
 
 /**
  * Search query field: { requestType, ratingType, username, destId }
@@ -459,5 +518,20 @@ app.use((error, req, res, next) => {
     res.status(status).send(msg);
 });
 
-app.listen(port, () => console.log(`App is running on port ${port}`));
-connect();
+// Launch server
+
+let server;
+
+export async function start() {
+    if (server)
+        return;
+    await connect();
+    server = app.listen(port, () => console.log(`App is running on port ${port}`));
+}
+
+export async function stop() {
+    server.close();
+    await disconnect();
+}
+
+await start();

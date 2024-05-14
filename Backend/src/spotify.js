@@ -6,7 +6,8 @@ dotenv.config();
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
-let token = getToken();
+let token;
+await getToken();
 
 /**
  * Initializes a token based on the client_id and client_secret hashes.
@@ -58,9 +59,11 @@ export async function searchSpotify(query, types, limit) {
     }).then(res => res.json());
 
     // Handle expired token
-    if (response.status === 401) {
-        await getToken();
-        return searchSpotify(query, types, limit);
+    if (response.error !== undefined) {
+        if (response.status === 401) {
+            await getToken();
+            return searchSpotify(query, types, limit);
+        }
     }
 
     response.albums?.items?.forEach(cleanAlbum);

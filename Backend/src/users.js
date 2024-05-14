@@ -73,6 +73,42 @@ export async function follow(username, userToFollow) {
 }
 
 /**
+ * User with the provided username unfollows the user with the provided userToUnfollow.
+ * 
+ * @param {string} username - The username of the user.
+ * @param {string} userToUnfollow - The username of the user to unfollow.
+ * @returns {JSON} - An object containing a success message if the user has unfollowed the target user.
+ * @throws {BackendErrorType} - Throws an error if the user does not exist, if the target user does not exist, 
+ *                              if the user is not following the target user, or if the user tries to unfollow themselves.
+*/
+export async function unfollow(username, userToUnfollow) {
+    if (username === userToUnfollow) {
+        throw BackendErrorType.SELF_UNFOLLOW;
+    }
+
+    const user = await UserData.findOne({ username: username });
+    const targetUser = await UserData.findOne({ username: userToUnfollow });
+
+    if (!user || !targetUser) {
+        throw BackendErrorType.USER_DNE;
+    }
+
+    if (!user.user_following_list.includes(userToUnfollow)) {
+        throw BackendErrorType.NOT_FOLLOWING;
+    }
+
+    user.user_following_list.pull(userToUnfollow);
+    await user.save();
+
+    targetUser.user_follower_list.pull(username);
+    await targetUser.save();
+
+    let result = { message: `You have unfollowed ${userToUnfollow}` };
+
+    return result;
+}
+
+/**
  * Searches for users based on the provided search term.
  * takes in a query with above field and returns an array of JSON results or throws a Backend Error
  * The following endpoint recieves a searchTerm related to a user and queries the database using
