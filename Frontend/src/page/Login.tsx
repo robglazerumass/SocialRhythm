@@ -5,6 +5,7 @@ import signup_img from "../assets/signup_img.jpg";
 import { toast, Bounce } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+import useAuth from "../service/useAuth";
 // minified version is also included
 // import 'react-toastify/dist/ReactToastify.min.css';
 
@@ -12,8 +13,9 @@ function Login() {
 	const [loginForm, setLoginForm] = useState({ username: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
 	// const [navPossible, setNavPossible] = useState(false);
-	let location = useLocation();
-	const navigate = useNavigate();
+	// const location = useLocation();
+	// const navigate = useNavigate();
+	const auth = useAuth();
 	const errorNotify = (message: string) => {
 		toast(message, {
 			type: "error",
@@ -41,6 +43,7 @@ function Login() {
 
 	const handleSubmit = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
+		/*
 		const url = `http://localhost:3000/api/login?username=${loginForm.username}&password=${loginForm.password}`;
 		const data = await axios
 			.get(url)
@@ -54,6 +57,13 @@ function Login() {
 				state: { username: loginForm.username, replace: true },
 			});
 		}
+		*/
+		console.log("auth", auth);
+		const loginInputs = {
+			currUsername: loginForm.username,
+			currPassword: loginForm.password,
+		};
+		auth.loginAction(loginInputs);
 	};
 
 	return (

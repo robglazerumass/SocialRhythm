@@ -1,7 +1,8 @@
 import { ReactNode, useState } from "react";
 import { HomeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import SearchModal from "./SearchModal";
+import useAuth from "../service/useAuth";
 
 interface MenuBarProps {
 	icon: ReactNode;
@@ -27,19 +28,20 @@ function MenuItems({
 			onClick={() => {
 				setSelected(name);
 			}}>
-			<a
-				className="flex justify-center gap-2 text-white flex-col p-0 items-center"
-				href={`../${linkTo}`}>
-				{icon}
-			</a>
+			<Link to={`../${linkTo}`}>
+				<a className="flex justify-center gap-2 text-white flex-col p-0 items-center">
+					{icon}
+				</a>
+			</Link>
 		</button>
 	);
 }
 
 export default function MenuBar() {
 	const [selected, setSelected] = useState("Feed");
-	const { state } = useLocation();
-	const { username } = state;
+	// const { state } = useLocation();
+	// const { username } = state;
+	const auth = useAuth();
 	return (
 		<div className="fixed z-10 left-10 h-screen flex flex-col justify-center w-1/12">
 			<ul className="menu flex bg-primary bg-opacity-30 justify-center rounded-full w-8/12 shadow-lg shadow-black">
@@ -56,6 +58,8 @@ export default function MenuBar() {
 						icon={<UserCircleIcon className="h-6 w-6" />}
 						name="Friends"
 						linkTo="feed"
+						selected={selected}
+						setSelected={setSelected}
 					/>
 				</div>
 			</ul>

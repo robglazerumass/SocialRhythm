@@ -2,8 +2,10 @@ import { useLoaderData } from "react-router-dom";
 import { ProfileType } from "../../interface/interface";
 import MenuBar from "../components/MenuBar";
 import ProfileLeftCard from "../components/ProfileLeftCard";
+import useAuth from "../service/useAuth";
 
 function Profile() {
+	const auth = useAuth();
 	const userData: ProfileType = useLoaderData() as ProfileType;
 	console.log(userData);
 	return (

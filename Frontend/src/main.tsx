@@ -9,35 +9,49 @@ import Feed from "./page/Feed.tsx";
 import { ToastContainer, Bounce } from "react-toastify";
 import Profile from "./page/Profile.tsx";
 import idLoader from "./service/getId.tsx";
+import AuthProvider from "./service/AuthProvider.tsx";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <App />,
+		children: [],
 	},
 	{
 		path: "login",
-		element: <Login />,
+		element: (
+			<AuthProvider>
+				<Login />
+			</AuthProvider>
+		),
 	},
 	{
 		path: "signup",
 		element: <SignUp />,
 	},
 	{
-		path: "friends",
-		element: <Feed />,
-	},
-	{
 		path: "feed",
-		element: <Feed />,
+		element: (
+			<AuthProvider>
+				<Feed />
+			</AuthProvider>
+		),
 	},
 	{
 		path: "/user/:username",
-		element: <Profile />,
+		element: (
+			<AuthProvider>
+				<Profile />
+			</AuthProvider>
+		),
 		loader: ({ params }) => {
 			if (params == undefined) return idLoader("alice123");
 			return idLoader(params.username as string);
 		},
+	},
+	{
+		path: "friends",
+		element: <Feed />,
 	},
 ]);
 

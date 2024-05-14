@@ -5,24 +5,27 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Post from "../components/Post";
 import CreatePostForm from "../components/createPostForm";
+import useAuth from "../service/useAuth";
 
 export default function Feed() {
+	const auth = useAuth();
 	const [feedData, setFeedData] = useState(postMockData);
 	const [showSearchModal, setShowSearchModal] = useState(false);
-	const { state } = useLocation();
-	const { username } = state;
+	// const { state } = useLocation();
+	// const { username } = state;
 	useEffect(() => {
 		async function fetchPosts() {
-			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
+			console.log("auth in feed ", auth);
+			const nextURL: string = `http://localhost:3000/api/feed?username=${auth.user}&xPosts=3&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
 			setFeedData(data);
 			console.log(data);
 		}
 		fetchPosts();
-	}, [username]);
+	}, [auth.user]);
 	return (
 		<div className="homepage inline-flex flex-row w-screen">
-			<MenuBar username={username} setShowSearchModal={setShowSearchModal} />
+			<MenuBar setShowSearchModal={setShowSearchModal} />
 			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
 					className="btn bg-primary bg-opacity-30 border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"

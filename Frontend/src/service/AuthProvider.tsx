@@ -19,7 +19,7 @@ export const AuthContext = createContext<AuthContextType>(null!);
 
 function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState("");
-	const [token, setToken] = useState(localStorage.getItem("username") || "");
+	const [token, setToken] = useState(sessionStorage.getItem("username") || "");
 	const navigate = useNavigate();
 
 	const loginAction = async (userData: {
@@ -35,7 +35,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 		if (data.result == "SUCCESS") {
 			setUser(currUsername);
 			setToken(currUsername);
-			localStorage.setItem("username", currUsername);
+			sessionStorage.setItem("username", currUsername);
 			navigate("/feed");
 		}
 	};
@@ -43,7 +43,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 	const logoutAction = () => {
 		setUser("");
 		setToken("");
-		localStorage.removeItem("username");
+		sessionStorage.removeItem("username");
 		navigate("/login");
 	};
 	return (
