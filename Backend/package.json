@@ -5,8 +5,9 @@
     "description": "Backend to Social Rhythm",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node index.js"
+        "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest --runInBand",
+        "start": "node index.js",
+        "docs": "jsdoc src README.md --destination ./out && open ./out/index.html"
     },
     "repository": {
         "type": "git",
@@ -22,7 +23,12 @@
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
+        "jsdoc": "^4.0.3",
         "mongoose": "^8.2.4",
+        "node-fetch": "^3.3.2",
         "react-toastify": "^10.0.5"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0"
     }
 }

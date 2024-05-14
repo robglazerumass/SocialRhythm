@@ -7,6 +7,8 @@ import Login from "./page/Login.tsx";
 import SignUp from "./page/SignUp.tsx";
 import Feed from "./page/Feed.tsx";
 import { ToastContainer, Bounce } from "react-toastify";
+import Profile from "./page/Profile.tsx";
+import idLoader from "./service/getId.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -29,10 +31,13 @@ const router = createBrowserRouter([
 		path: "feed",
 		element: <Feed />,
 	},
-
 	{
-		path: "trending",
-		element: <Feed />,
+		path: "/user/:username",
+		element: <Profile />,
+		loader: ({ params }) => {
+			if (params == undefined) return idLoader("alice123");
+			return idLoader(params.username as string);
+		},
 	},
 ]);
 
