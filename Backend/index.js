@@ -1,6 +1,6 @@
 import express, { query } from "express";
 import cors from 'cors';
-import { connect } from './Database/MongoDBServer.js';
+import { connect, disconnect } from './Database/MongoDBServer.js';
 import { BackendErrorType } from "./src/BackendError.js";
 import bodyParser from 'body-parser';
 
@@ -459,5 +459,20 @@ app.use((error, req, res, next) => {
     res.status(status).send(msg);
 });
 
-app.listen(port, () => console.log(`App is running on port ${port}`));
-connect();
+// Launch server
+
+let server;
+
+export async function start() {
+    if (server)
+        return;
+    await connect();
+    server = app.listen(port, () => console.log(`App is running on port ${port}`));
+}
+
+export async function stop() {
+    server.close();
+    await disconnect();
+}
+
+await start();
