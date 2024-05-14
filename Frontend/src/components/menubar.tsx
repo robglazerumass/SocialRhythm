@@ -56,7 +56,6 @@ export default function MenuBar() {
 						icon={<UserCircleIcon className="h-6 w-6" />}
 						name="Friends"
 						linkTo="feed"
-						username={username}
 					/>
 				</div>
 			</ul>

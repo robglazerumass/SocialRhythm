@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType>(null!);
 
 function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState("");
-	const [token, setToken] = useState(localStorage.getItem("username" || ""));
+	const [token, setToken] = useState(localStorage.getItem("username") || "");
 	const navigate = useNavigate();
 
 	const loginAction = async (userData: {

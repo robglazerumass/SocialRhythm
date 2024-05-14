@@ -1,6 +1,6 @@
 import { useLoaderData } from "react-router-dom";
 import { ProfileType } from "../../interface/interface";
-import MenuBar from "../components/menubar";
+import MenuBar from "../components/MenuBar";
 import ProfileLeftCard from "../components/ProfileLeftCard";
 
 function Profile() {

@@ -8,7 +8,7 @@ interface PostPropsType {
 	title: string;
 	description: string;
 	img: string;
-	comment_list: object[];
+	comments_list: object[];
 	likes_list: string[];
 	dislikes_list: string[];
 }
@@ -40,9 +40,7 @@ export default function Post({
 				</div>
 				<div className="flex flex-col gap-4">
 					<p className="font-extrabold text-3xl">{title}</p>
-					<p className="max-w-full flex flex-wrap break-all">
-						{description}
-					</p>
+					<p className="max-w-full flex flex-wrap break-all">{description}</p>
 				</div>
 			</div>
 			<div className="temp-feed-view h-full overflow-y-visible w-full flex flex-col items-center box-border">
