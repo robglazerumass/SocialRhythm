@@ -7,8 +7,8 @@
     "scripts": {
         "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest --runInBand",
         "start": "node index.js",
-        "docs": "jsdoc src README.md --destination ./out && start ./out/index.html",
-        "docs:windows": ""
+        "docs": "jsdoc src README.md --destination ./out && open ./out/index.html",
+        "docs:windows": "jsdoc src README.md --destination ./out && start ./out/index.html"
     },
     "repository": {
         "type": "git",
