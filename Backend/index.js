@@ -371,7 +371,6 @@ app.post("/api/Rating", async (req, res, next) => {
 
 
 /**
- * Search query field: { username, postId, commentString }
  * Creates a new comment on a post specified by the provided postId.
  * If successful, returns a JSON object with a success message.
  * If invalid, throws a backend error with an appropriate message.
