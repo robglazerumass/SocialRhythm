@@ -1,15 +1,26 @@
 import MenuBar from "../components/MenuBar";
-import postMockData from "../mockData/postMockData";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Post from "../components/Post";
 import CreatePostForm from "../components/createPostForm";
 
+interface Post {
+	key: string;
+	_id: string;
+	username: string;
+	title: string;
+	description: string;
+	img: string;
+	comments_list: object[];
+	likes_list: string[];
+	dislikes_list: string[];
+	spotify_link: string;
+}
+
 
 export default function Feed() {
-	const [feedData, setFeedData] = useState(postMockData);
-	const [showSearchModal, setShowSearchModal] = useState(false)
+	const [feedData, setFeedData] = useState([]);
 	const { state } = useLocation();
 	const { username } = state;
 	useEffect(() => {
@@ -22,11 +33,11 @@ export default function Feed() {
 	}, [username]);
 	return (
 		<div className="homepage inline-flex flex-row w-screen">
-			<MenuBar setShowSearchModal={setShowSearchModal} />
+			<MenuBar />
 			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
 					className="btn bg-primary bg-opacity-30 border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"
-					onClick={() => {document.getElementById("create_post_modal").showModal()}
+					onClick={() => {(document.getElementById("create_post_modal") as HTMLDialogElement)?.showModal()}
 					}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -50,17 +61,18 @@ export default function Feed() {
 				</form>
 				</dialog>
 				<div className="post-container w-full flex flex-col items-center">
-					{feedData.map((post) => (
+					{feedData.map((post: Post) => (
 						<Post
 							key={post._id}
 							id={post._id}
 							username={post.username}
 							title={post.title}
 							description={post.description}
-							img={post.image_url}
+							image_url={post.image_url}
 							comments_list={post.comments_list}
 							likes_list={post.likes_list}
 							dislikes_list={post.dislikes_list}
+							spotify_link={post.spotify_link}
 						/>
 					))}
 				</div>
