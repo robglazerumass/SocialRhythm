@@ -1,14 +1,13 @@
 import { ReactNode } from "react";
 
 export interface ProfileType {
-	[x: string]: any;
 	username: string;
-	bio: string;
-	firstName: string;
-	lastName: string;
-	followers: string[];
-	following: string[];
-	postList: PostType[];
+	user_bio: string;
+	user_first_name: string;
+	user_last_name: string;
+	user_follower_list: string[];
+	user_following_list: string[];
+	user_post_list: PostType[];
 }
 
 export interface PostType {

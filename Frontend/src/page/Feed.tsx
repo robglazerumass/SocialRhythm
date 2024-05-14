@@ -19,7 +19,7 @@ function Post({
 	img: string;
 }) {
 	return (
-		<div className="post-content w-2/5 bg-dark-purple my-10 px-10 rounded-lg drop-shadow-lg">
+		<div className="post-content card w-2/5 bg-dark-purple my-10 px-10 rounded-lg drop-shadow-lg">
 			<div className="top-half flex flex-col justify-center gap-5 py-5 w-full box-border">
 				<div className="flex flex-row gap-4">
 					<div className="avatar">
@@ -62,7 +62,7 @@ export default function Feed() {
 	}, [username]);
 	return (
 		<div className="homepage inline-flex flex-row w-screen">
-			<MenuBar setShowSearchModal={setShowSearchModal} />
+			<MenuBar username={username} setShowSearchModal={setShowSearchModal} />
 			<div className="feed-container flex flex-col grow justify-center items-center h-full w-full overflow-hidden">
 				<button
 					className="btn bg-purple-btn border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"

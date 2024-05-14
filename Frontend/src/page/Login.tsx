@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import signup_img from "../assets/signup_img.jpg";
@@ -12,6 +12,7 @@ function Login() {
 	const [loginForm, setLoginForm] = useState({ username: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
 	// const [navPossible, setNavPossible] = useState(false);
+	let location = useLocation();
 	const navigate = useNavigate();
 	const errorNotify = (message: string) => {
 		toast(message, {
@@ -48,9 +49,10 @@ function Login() {
 			})
 			.catch((err) => errorNotify(err.response.data));
 		if (data.result == "SUCCESS") {
-			navigate("/feed", { state: { username: loginForm.username } });
-			// console.log("succeeded");
-			// setNavPossible(true);
+			console.log("from ", location.state?.from?.pathname || "/");
+			navigate("/feed", {
+				state: { username: loginForm.username, replace: true },
+			});
 		}
 	};
 
