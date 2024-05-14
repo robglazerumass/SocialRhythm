@@ -15,7 +15,7 @@ interface AuthContextType {
 	}) => Promise<void>;
 	logoutAction: () => void;
 }
-const AuthContext = createContext<AuthContextType>(null!);
+export const AuthContext = createContext<AuthContextType>(null!);
 
 function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState("");
