@@ -8,7 +8,7 @@ import bodyParser from 'body-parser';
 import { searchSpotify } from "./src/spotify.js";
 import { login, signup } from "./src/account.js";
 import { feed, createPost, rating, createComment, getComments } from "./src/posts.js";
-import { profile, follow, search } from "./src/users.js";
+import { profile, follow, unfollow, search } from "./src/users.js";
 
 const app = express();
 app.use(cors());
@@ -222,6 +222,36 @@ app.post('/api/follow', async (req, res, next) => {
         }
 
         let result = await follow(username, userToFollow);
+        res.json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * Search query field: { username, userToUnfollow }
+ * User with the provided username unfollows the user with the provided userToUnfollow.
+ * If successful, returns a JSON object with a success message if the user has unfollowed the target user.
+ * If invalid, throws a backend error with an appropriate message.
+ * @httpMethod POST
+ * @example
+ * Request:
+ *   POST /api/unfollow?username=johndoe&userToUnfollow=janedoe
+ * Response (Success):
+ *  {
+ *  "result": "SUCCESS"
+ * }
+ * Response (Error): // See BackendError.js for more information
+*/
+app.post('/api/unfollow', async (req, res, next) => {
+    try {
+        let { username, userToUnfollow } = req.query;
+
+        if (!isValidQuery([username, userToUnfollow])) {
+            throw BackendErrorType.INVALID_QUERY;
+        }
+
+        let result = await unfollow(username, userToUnfollow);
         res.json(result);
     } catch (error) {
         next(error);
