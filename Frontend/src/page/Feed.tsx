@@ -1,50 +1,11 @@
-import FeedImage from "../components/FeedImage";
-import Interaction from "../components/Interaction";
 import MenuBar from "../components/MenuBar";
 import postMockData from "../mockData/postMockData";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import createPostForm from "../components/createPostForm";
+import Post from "../components/Post";
+import CreatePostForm from "../components/createPostForm";
 
-function Post({
-	username,
-	title,
-	description,
-	img,
-}: {
-	username: string;
-	title: string;
-	description: string;
-	img: string;
-}) {
-	return (
-		<div className="post-content w-2/5 bg-primary bg-opacity-10 my-10 px-10 rounded-lg drop-shadow-lg">
-			<div className="top-half flex flex-col justify-center gap-5 py-5 w-full box-border">
-				<div className="flex flex-row gap-4">
-					<div className="avatar">
-						<div className="w-12 rounded-full">
-							<img src={img} />
-						</div>
-					</div>
-					<div className="min-h-full flex flex-col justify-center text-xl font-bold">
-						<p>
-							<Link to={`../user/${username}`}>{username}</Link>
-						</p>
-					</div>
-				</div>
-				<div className="flex flex-col gap-4">
-					<p className="font-extrabold text-3xl">{title}</p>
-					<p className="max-w-full flex flex-wrap break-all">{description}</p>
-				</div>
-			</div>
-			<div className="temp-feed-view h-full overflow-y-visible w-full flex flex-col items-center box-border">
-				<FeedImage />
-				<Interaction />
-			</div>
-		</div>
-	);
-}
 
 export default function Feed() {
 	const [feedData, setFeedData] = useState(postMockData);
@@ -56,7 +17,6 @@ export default function Feed() {
 			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
 			setFeedData(data);
-			console.log(data)
 		}
 		fetchPosts();
 	}, [username]);
@@ -68,12 +28,6 @@ export default function Feed() {
 					className="btn bg-primary bg-opacity-30 border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"
 					onClick={() => {document.getElementById("create_post_modal").showModal()}
 					}>
-					{/* <a
-							className="flex justify-start gap-7 text-black"
-							// onClick={() =>
-							// 	document.getElementById("create_post_modal").showModal()
-							// }
-						> */}
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -88,25 +42,25 @@ export default function Feed() {
 						/>
 					</svg>
 					Create Post
-					{/* </a> */}
 				</button>
-				<dialog id="create_post_modal" className="modal">
-					{createPostForm()}
+				<dialog id="create_post_modal" className="modal w-full">
+					<CreatePostForm/>
+					<form method="dialog" className="modal-backdrop">
+					<button className="opacity-0">close</button>
+				</form>
 				</dialog>
-				{/* <Post
-					username={defaultUsername}
-					title={defaultTitle}
-					description={defaultDesc}
-					img={defaultImg}
-				/> */}
 				<div className="post-container w-full flex flex-col items-center">
 					{feedData.map((post) => (
 						<Post
-							key={post.username}
+							key={post._id}
+							id={post._id}
 							username={post.username}
 							title={post.title}
 							description={post.description}
 							img={post.image_url}
+							comments_list={post.comments_list}
+							likes_list={post.likes_list}
+							dislikes_list={post.dislikes_list}
 						/>
 					))}
 				</div>

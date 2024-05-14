@@ -75,6 +75,41 @@ export async function createPost(username, title, description, spotify_link, ima
 }
 
 /**
+ * Deletes a post with the provided postId.
+ * 
+ * @param {string} postId - The ID of the post to delete.
+ * @returns {JSON} - An object containing a success message if the post is deleted successfully.
+ * @throws {BackendErrorType} - Throws an error if the post does not exist or if there's an error during deletion.
+*/
+export async function deletePost(postId) {
+    const post = await PostData.findOne({ _id: postId });
+
+    if (!post) {
+        throw BackendErrorType.POST_DNE;
+    }
+
+    const user = await UserData.findOne({ username: post.username });
+
+    if (!user) {
+        throw BackendErrorType.USER_DNE;
+    }
+
+    // Remove the post from the user's post list
+    user.user_post_list.pull(postId);
+    await user.save();
+
+    // Delete the comments associated with the post
+    await CommentData.deleteMany({ post_id: postId });
+
+    // Delete the post
+    await PostData.deleteOne({ _id: postId });
+
+    let result = { message: `Post with ID ${postId} has been deleted` };
+
+    return result;
+}
+
+/**
  * Takes in a request with above fields and adds or removes a like or dislike from 
  * a post or comment.
  * 
