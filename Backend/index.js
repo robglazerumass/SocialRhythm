@@ -7,7 +7,7 @@ import bodyParser from 'body-parser';
 // Import the abstracted helper functions from the other files
 import { searchSpotify } from "./src/spotify.js";
 import { login, signup } from "./src/account.js";
-import { feed, createPost, rating, createComment, getComments } from "./src/posts.js";
+import { feed, createPost, deletePost, rating, createComment, getComments } from "./src/posts.js";
 import { profile, follow, unfollow, search } from "./src/users.js";
 
 const app = express();
@@ -370,6 +370,35 @@ app.post('/api/createPost', bodyParser.json(), async (req, res, next) => {
     }
 });
 
+/**
+ * Search query field: { postId }
+ * Deletes a post with the provided postId.
+ * If successful, returns a JSON object with a success message if the post is deleted successfully.
+ * If invalid, throws a backend error with an appropriate message.
+ * @httpMethod DELETE
+ * @example
+ * Request:
+ *   DELETE /api/deletePost?postId=60a5c3f1d9b2a52a3c8d0f1c
+ * Response (Success):
+ *  {
+ *    "message": "Post with ID 60a5c3f1d9b2a52a3c8d0f1c has been deleted"
+ *  }
+ * Response (Error): // See BackendError.js for more information
+*/
+app.delete('/api/deletePost', async (req, res, next) => {
+    try {
+        let { postId } = req.query;
+
+        if (!isValidQuery([postId])) {
+            throw BackendErrorType.INVALID_QUERY;
+        }
+
+        let result = await deletePost(postId);
+        res.json(result);
+    } catch (error) {
+        next(error);
+    }
+});
 
 /**
  * Search query field: { requestType, ratingType, username, destId }
