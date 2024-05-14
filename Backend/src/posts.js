@@ -211,7 +211,13 @@ export async function createComment(username, postId, commentString) {
  * @throws {BackendErrorType} - Throws an error if the provided query is invalid or if the post does not exist.
  */
 export async function getComments(postId) {
-    let post = await PostData.findOne({ _id: postId })
+    let post = null
+    try{
+        post = await PostData.findOne({ _id: postId })
+    }
+    catch(error){
+        throw BackendErrorType.POST_DNE
+    }
 
     if (post === null || post === undefined)
         throw BackendErrorType.POST_DNE

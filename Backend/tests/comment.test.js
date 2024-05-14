@@ -89,6 +89,57 @@ describe("createComment Function", () => {
 });
 
 describe("getComments Function", () => {
+    it("Test API integration", async () => {
+        const response = await getRequest("/getComments", {
+            postId: "6629b52321a4e8bba1adc12a"
+        });
+        expect(response).not.toEqual(undefined);
+        expect(response.length).toBeGreaterThan(0);
+    });
 
+    it("Test Helper Function", async () => {
+        const response = await getComments("6629b52321a4e8bba1adc12a");
+        expect(response).not.toEqual(undefined);
+        expect(response.length).toBeGreaterThan(0);
+    });
+
+    it("Test Invalid Post", async () => {
+        try {
+            await getComments("6629b52321a4e8bba1adc13d");
+            throw new Error("Should Not Reach Here");
+        } catch (e) {
+            expect(e).toEqual(BackendErrorType.POST_DNE);
+        }
+    });
+
+    it("Test Valid Post", async () => {
+        const response = await getComments("6629b52321a4e8bba1adc12a");
+        expect(response).not.toEqual(undefined);
+        expect(response.length).toBeGreaterThan(0);
+    });
+
+    it("Test Empty Post", async () => {
+        const response = await getComments("66417aec7d63165e0edd397c");
+        expect(response).not.toEqual(undefined);
+        expect(response.length).toEqual(0);
+    });
+
+    it("Should Properly Handle If Id cannot be converted to ObjectId (Slightly Wrong)", async () => {
+        try {
+            await getComments("invalidId");
+            throw new Error("Should Not Reach Here");
+        } catch (e) {
+            expect(e).toEqual(BackendErrorType.POST_DNE);
+        }
+    });
+
+    it("Should Properly Handle If Id cannot be converted to ObjectId (Completely Wrong)", async () => {
+        try {
+            await getComments("invalidId");
+            throw new Error("Should Not Reach Here");
+        } catch (e) {
+            expect(e).toEqual(BackendErrorType.POST_DNE);
+        }
+    });
 
 });
