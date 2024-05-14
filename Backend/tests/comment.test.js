@@ -85,6 +85,13 @@ describe("createComment Function", () => {
         }
     });
 
+    it("Should Increase Comment Count", async () => {
+        const commentsBefore = await getComments("6629b52321a4e8bba1adc12a");
+        const response = await createComment("alice123", "6629b52321a4e8bba1adc12a", "This is a test comment");
+        const commentsAfter = await getComments("6629b52321a4e8bba1adc12a");
+        expect(commentsAfter.length).toEqual(commentsBefore.length + 1);
+    });
+
 
 });
 
@@ -140,6 +147,19 @@ describe("getComments Function", () => {
         } catch (e) {
             expect(e).toEqual(BackendErrorType.POST_DNE);
         }
+    });
+
+    it("Comments Returned Should Have Proper Fields", async () => {
+        const response = await getComments("6629b52321a4e8bba1adc12a");
+        expect(response).not.toEqual(undefined);
+        expect(response.length).toBeGreaterThan(0);
+
+        const comment = response[0];
+        expect(comment).toHaveProperty("username");
+        expect(comment).toHaveProperty("comment_string");
+        expect(comment).toHaveProperty("comment_like_list");
+        expect(comment).toHaveProperty("comment_dislike_list");
+        expect(comment).toHaveProperty("date_created");
     });
 
 });
