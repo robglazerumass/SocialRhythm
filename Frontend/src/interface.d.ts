@@ -24,3 +24,10 @@ export interface PostType {
 	dateCreated: Date;
 	spotifyLink: string;
 }
+
+export interface MyBtnType {
+	classNameStyle: string;
+	eventClick: (() => void) | undefined;
+	children: ReactNode | undefined;
+	name: string;
+}

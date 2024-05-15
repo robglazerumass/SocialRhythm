@@ -1,4 +1,4 @@
-import { ProfileType } from "../../interface/interface";
+import { ProfileType } from "../interface";
 
 function ProfileLeftCard(props: ProfileType) {
 	const profileLink =

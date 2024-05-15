@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { HomeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SearchModal from "./SearchModal";
 import useAuth from "../service/useAuth";
 

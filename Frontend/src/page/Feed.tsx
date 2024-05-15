@@ -1,5 +1,5 @@
 import MenuBar from "../components/MenuBar";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Post from "../components/Post";
