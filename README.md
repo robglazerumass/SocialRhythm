@@ -94,6 +94,8 @@ To run the Frontend use:
 ```bash
   npm run dev
 ```
+> **_NOTE:_**  *If an error occurs involving a missing module, delete the package-lock.json file and the node-modules directory and then run `npm install` again. After that try doing `npm run dev` and it should work.*
+
 A link will appear in your terminal that you can follow to access the project. 
 
 ## Running Tests
@@ -122,7 +124,8 @@ For security reasons the corresponding parts of each environment variable will r
 1. Due to a lack of users and a small set of mock data we are not able to properly view the function of our project on a larger scale.
 2. Some of the mock data within the database contain some discrepancies that cause the number of comments on some posts to be slightly off.
 3. In its current state the like and dislike buttons do nothing on the frontend. The functionality exists on the backend but unfortunately no connection was made between the two.
-4. When creating a post you will be able to play a preview of the song you are selecting to share. Unfortunately only some songs work for the preview and those that do will continue to play even after closing the window unless manually stopped or the end of the preview has been reached. 
+4. When creating a post you will be able to play a preview of the song you are selecting to share. Unfortunately only some songs work for the preview and those that do will continue to play even after closing the window unless manually stopped or the end of the preview has been reached.
+5. npm has a bug related to optional dependencies. This may result in an issue when following the steps to run the frontend. The error will involve a missing module but this can easily be resolved by remvoing both package-lock.json and the node_modules directory and trying npm install again.
  
 ## Authors
 
