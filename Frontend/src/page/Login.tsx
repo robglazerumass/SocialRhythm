@@ -5,28 +5,30 @@ import signup_img from "../assets/signup_img.jpg";
 import { toast, Bounce } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+import useAuth from "../service/useAuth";
 // minified version is also included
 // import 'react-toastify/dist/ReactToastify.min.css';
 
 function Login() {
 	const [loginForm, setLoginForm] = useState({ username: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
+	const auth = useAuth();
 	// const [navPossible, setNavPossible] = useState(false);
-	const navigate = useNavigate();
-	const errorNotify = (message: string) => {
-		toast(message, {
-			type: "error",
-			position: "top-right",
-			autoClose: 5000,
-			hideProgressBar: true,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "light",
-			transition: Bounce,
-		});
-	};
+	// const navigate = useNavigate();
+	// const errorNotify = (message: string) => {
+	// 	toast(message, {
+	// 		type: "error",
+	// 		position: "top-right",
+	// 		autoClose: 5000,
+	// 		hideProgressBar: true,
+	// 		closeOnClick: true,
+	// 		pauseOnHover: true,
+	// 		draggable: true,
+	// 		progress: undefined,
+	// 		theme: "light",
+	// 		transition: Bounce,
+	// 	});
+	// };
 
 	const handleShowPassword = () => {
 		if (!showPassword) setShowPassword(true);
@@ -40,6 +42,7 @@ function Login() {
 
 	const handleSubmit = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
+		/*
 		const url = `http://localhost:3000/api/login?username=${loginForm.username}&password=${loginForm.password}`;
 		const data = await axios
 			.get(url)
@@ -52,6 +55,13 @@ function Login() {
 			// console.log("succeeded");
 			// setNavPossible(true);
 		}
+		*/
+		console.log("auth", auth);
+		const loginInputs = {
+			currUsername: loginForm.username,
+			currPassword: loginForm.password,
+		};
+		auth.loginAction(loginInputs);
 	};
 
 	return (

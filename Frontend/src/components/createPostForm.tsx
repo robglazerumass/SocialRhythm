@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { FormEvent, useEffect, useState } from "react";
 import Preview from "./Preview";
 import axios from "axios";
+import useAuth from "../service/useAuth";
 
 interface Artist {
 	external_url: { spotify: string };
@@ -17,8 +18,10 @@ interface Track {
 }
 
 export default function CreatePostForm() {
-	const { state } = useLocation();
-	const { username } = state;
+	// const { state } = useLocation();
+	// const { username } = state;
+	const auth = useAuth();
+	const username = auth.user;
 	const [postData, setPostData] = useState({
 		username: username,
 		title: "",
@@ -29,12 +32,12 @@ export default function CreatePostForm() {
 	});
 	const [spotifyQuery, setSpotifyQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<Track[]>([]);
-	const [hasError, setHasError] = useState(false)
+	const [hasError, setHasError] = useState(false);
 
 	const SEARCH_INTERVAL = 1000; // after the user stops typing for x seconds, search spotify
 
 	const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
-		setHasError(false)
+		setHasError(false);
 		setPostData((prev) => ({
 			...prev,
 			[(event.target as HTMLInputElement).name]: (
@@ -43,30 +46,33 @@ export default function CreatePostForm() {
 		}));
 	};
 
-	const handlePost= async (event: FormEvent<SubmitEvent>) => {
-		event.preventDefault()
-		console.log("Here")
+	const handlePost = async (event: FormEvent<SubmitEvent>) => {
+		event.preventDefault();
+		console.log("Here");
 		try {
-			setHasError(false)
-			const result = await axios.post("http://localhost:3000/api/createPost", postData)
-			if(result.data.result === "SUCCESS")
-				(document.getElementById("create_post_modal") as HTMLDialogElement).close();
-
+			setHasError(false);
+			const result = await axios.post(
+				"http://localhost:3000/api/createPost",
+				postData
+			);
+			if (result.data.result === "SUCCESS")
+				(
+					document.getElementById("create_post_modal") as HTMLDialogElement
+				).close();
 		} catch {
-			setHasError(true)
+			setHasError(true);
 		}
-	}
+	};
 
 	useEffect(() => {
 		const waitToSearch = setTimeout(async () => {
-			setHasError(false)
+			setHasError(false);
 			try {
 				if (spotifyQuery.length > 0) {
 					console.log(`searching ... ${spotifyQuery}`);
 					const url = `http://localhost:3000/api/searchContent?searchTerm=${spotifyQuery}&type=track&limit=${5}`;
 					const spotifySearchResult = await axios.get(url);
-					const songs: Track[] =
-						spotifySearchResult.data.tracks.items;
+					const songs: Track[] = spotifySearchResult.data.tracks.items;
 					setSearchResults(songs);
 				}
 			} catch (error) {
@@ -77,12 +83,13 @@ export default function CreatePostForm() {
 	}, [spotifyQuery]);
 
 	return (
-		<div id="create-post-modal-box" className="modal-box flex flex-col gap-4 max-w-[1000px] h-4/5">
+		<div
+			id="create-post-modal-box"
+			className="modal-box flex flex-col gap-4 max-w-[1000px] h-4/5">
 			<div className="modal-action m-0 p-0 absolute top-4 right-4">
 				<form
 					method="dialog"
-					className="h-8 w-full flex justify-end items-center"
-				>
+					className="h-8 w-full flex justify-end items-center">
 					{/* if there is a button in form, it will close the modal */}
 					<button className="btn bg-transparent p-0 m- border-0">
 						<XMarkIcon className="h-6 w-6" />
@@ -100,8 +107,7 @@ export default function CreatePostForm() {
 				<form
 					id="create-post-form"
 					className="flex flex-col gap-4 w-5/12 h-full"
-					onSubmit={handlePost}
-				>
+					onSubmit={handlePost}>
 					<input
 						className="h-12 bg-transparent border-2 border-purple-400 border-opacity-50 rounded-md p-4"
 						name="title"
@@ -137,15 +143,15 @@ export default function CreatePostForm() {
 						value={spotifyQuery}
 						onChange={(event) => {
 							setSearchResults([]);
-							setSpotifyQuery(
-								(event.target as HTMLInputElement).value
-							);
+							setSpotifyQuery((event.target as HTMLInputElement).value);
 						}}
 						placeholder="Search Song on Spotify..."
 						autoComplete="off"
 					/>
 					{searchResults.length > 0 && spotifyQuery.length > 0 ? (
-						<ul id="search_reults" className="bg-white bg-opacity-10 rounded-lg flex flex-col justify-between shadow-xl cursor-pointer p-2 gap-2">
+						<ul
+							id="search_reults"
+							className="bg-white bg-opacity-10 rounded-lg flex flex-col justify-between shadow-xl cursor-pointer p-2 gap-2">
 							{searchResults.map((track, i) => (
 								<button
 									key={i}
@@ -153,21 +159,16 @@ export default function CreatePostForm() {
 									onClick={(e) => {
 										setPostData({
 											...postData,
-											spotify_link:
-											track.external_urls.spotify,
-											audio_prev_link:
-											track.preview_url ?? "",
+											spotify_link: track.external_urls.spotify,
+											audio_prev_link: track.preview_url ?? "",
 										});
-										setSearchResults([])
-									}}
-								>
+										setSearchResults([]);
+									}}>
 									<p className="line-clamp-1 text-ellipsis font-bold">
 										{track.name}
 									</p>
 									<p className="text-sm opacity-70 text-ellipsis line-clamp-1">{`by: ${track.artists
-										.filter(
-											(artist) => artist.type === "artist"
-										)
+										.filter((artist) => artist.type === "artist")
 										.map((artist) => artist.name)
 										.join(", ")}`}</p>
 								</button>
@@ -175,8 +176,18 @@ export default function CreatePostForm() {
 						</ul>
 					) : (
 						<div>
-						<button className="bg-primary text-black h-12 w-full" type="submit">Post</button>
-						{hasError ? <p className="m-0 p-0 text-sm text-red-300">An error occurred. Try again in a few seconds...</p>: <></>}
+							<button
+								className="bg-primary text-black h-12 w-full"
+								type="submit">
+								Post
+							</button>
+							{hasError ? (
+								<p className="m-0 p-0 text-sm text-red-300">
+									An error occurred. Try again in a few seconds...
+								</p>
+							) : (
+								<></>
+							)}
 						</div>
 					)}
 				</form>
