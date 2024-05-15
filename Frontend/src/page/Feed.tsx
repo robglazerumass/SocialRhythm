@@ -11,7 +11,7 @@ interface Post {
 	username: string;
 	title: string;
 	description: string;
-	img: string;
+	image_url: string;
 	comments_list: object[];
 	likes_list: string[];
 	dislikes_list: string[];
@@ -77,7 +77,7 @@ export default function Feed() {
 							dislikes_list={post.dislikes_list}
 							spotify_link={post.spotify_link}
 						/>
-					)) : <p className="text-3xl font-extrabold h-full absolute top-1/2">Search and Follow to see posts</p>}
+					)) : <p className="text-3xl font-extrabold absolute top-1/2">Search and Follow to see posts</p>}
 				</div>
 			</div>
 		</div>

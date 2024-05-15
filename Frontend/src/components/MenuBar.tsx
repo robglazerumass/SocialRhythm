@@ -51,6 +51,8 @@ export default function MenuBar() {
 						icon={<UserCircleIcon className="h-6 w-6" />}
 						name="Profile"
 						linkTo={`/user/${username}`}
+						selected={selected}
+						setSelected={setSelected}
 					/>
 				</div>
 			</ul>

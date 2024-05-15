@@ -29,7 +29,6 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 	const {state} = useLocation()
 	const {username} = state
 	const [profile, setProfile] = useState<Profile>()
-	const [update, setUpdate] = useState(true)
 
 	useEffect(() => {
 		(async () => {
@@ -66,7 +65,7 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 		setSearchQuery(event.currentTarget.value);
 	};
 
-	const handleFollow = async (event: FormEvent<SubmitEvent>)=>{
+	const handleFollow = async (event: React.MouseEvent<HTMLButtonElement>)=>{
 		try{
 			const usernameToFollow = (event.target as HTMLElement).getAttribute("forUser")
 			const _ = await axios.post(`http://localhost:3000/api/follow?username=${username}&userToFollow=${usernameToFollow}`)
@@ -77,10 +76,10 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 		}
 	}
 
-	const handleUnfollow = async (event: FormEvent<SubmitEvent>) => {
+	const handleUnfollow = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		try{
 			const usernameToUnollow = (event.target as HTMLElement).getAttribute("forUser")
-			const _ = await axios.post(`http://localhost:3000/api/unfollow?username=${username}&userToUnfollow=${usernameToUnollow}`)
+			await axios.post(`http://localhost:3000/api/unfollow?username=${username}&userToUnfollow=${usernameToUnollow}`)
 			const res = await axios.get(`http://localhost:3000/api/profile?username=${username}`)
 			setProfile(res.data)
 		} catch(error){
