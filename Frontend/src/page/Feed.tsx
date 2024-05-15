@@ -64,7 +64,7 @@ export default function Feed() {
 					<CreatePostForm />
 				</dialog>
 				<div className="post-container w-full flex flex-col items-center">
-					{feedData.map((post: Post) => (
+					{feedData.length > 0 ?feedData.map((post: Post) => (
 						<Post
 							key={post._id}
 							id={post._id}
@@ -77,7 +77,7 @@ export default function Feed() {
 							dislikes_list={post.dislikes_list}
 							spotify_link={post.spotify_link}
 						/>
-					))}
+					)) : <p className="text-3xl font-extrabold h-full absolute top-1/2">Search and Follow to see posts</p>}
 				</div>
 			</div>
 		</div>
