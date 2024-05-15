@@ -1,7 +1,7 @@
 
 # Social Rhythm
 
-Social Rhythm is a social media platform catered for music lovers. The platform allows users to make an account and create posts about their favorite songs and artists. Users can follow friends, seeing what their friends have to say about current songs. Users can rate posts that they see with a like or dislike, along with leaving a comment on posts, sharing their opinions with others.
+[Social Rhythm](https://github.com/robglazerumass/SocialRhythm) is a social media platform catered for music lovers. The platform allows users to make an account and create posts about their favorite songs and artists. Users can follow friends, seeing what their friends have to say about current songs. Users can rate posts that they see with a like or dislike, along with leaving a comment on posts, sharing their opinions with others.
 
 
 ## How to Use the Project
