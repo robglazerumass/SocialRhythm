@@ -22,7 +22,7 @@ This project functions as most social media platforms would. On entry to the sit
 
 **Frontend:** React, TypeScript, Vite, TailwindCSS, DaisyUI
 
-**Backend:** Node, Express, Mongoose
+**Backend:** Node, Express, Mongoose, Spotify API
 
 **Database:** MongoDB
 
@@ -33,7 +33,7 @@ This project functions as most social media platforms would. On entry to the sit
 The code is primarily split into two pieces, the Frontend and the Backend
 
 ### Backend
-The Backend includes everything needed for the database, including schema and connection setup. Along with that it includes API endpoints that recieve and handle requests from the Frontend, along with custom Error handling. Finally the Backend contains unit tests that utilize jest to ensure that the code functions as needed. 
+The Backend includes everything needed for the database, including schema and connection setup. Along with that it includes API endpoints that recieve and handle requests from the Frontend, along with custom Error handling. We also utilize a spotify api for searching and the backend contains the set up and usage of that api. Finally the Backend contains unit tests that utilize jest to ensure that the code functions as needed. 
 
 ### Frontend
 The Frontend is set up and runs in real-time in the development environment using Vite. It includes an interface for type declaring, the components folder that includes aspects of each feature, custom hooks, a service folder for authentication, notification pop-ups, etc., and a pages folder for each page. The routing system is included in the "main.tsx", which is also the file that Vite uses. 
