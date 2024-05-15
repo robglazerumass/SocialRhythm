@@ -117,6 +117,10 @@ To succesfully run this project, you will need to include the following environm
 
 For security reasons the corresponding parts of each environment variable will remain hidden unless approved for use by an Author of the project. 
 
+## Limitations and Known Bugs
+
+1. Due to a lack of users and a small set of mock data we are not able to properly view the function of our project on a larger scale.
+2. Some of the mock data within the database contain some discrepancies that cause the number of comments on some posts to be slightly off.
  
 ## Authors
 
