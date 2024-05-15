@@ -29,7 +29,7 @@ export default function SignUp() {
 	};
 	return (
 		<div className="flex items-center justify-center h-screen">
-			<div className="flex flex-row bg-base-100 w-full shadow-xl h-5/6 lg:w-5/6 rounded-lg">
+			<div className="flex flex-row bg-base-100 w-full shadow-xl h-[90%] lg:w-5/6 rounded-lg">
 				<div className="flex w-0 lg:w-3/5">
 					<img
 						className="rounded-l-lg object-cover"
@@ -37,7 +37,7 @@ export default function SignUp() {
 						alt="party"
 					/>
 				</div>
-				<div className="card-body lg:w-96">
+				<div className="card-body bg-dark-purple lg:w-96">
 					<h2 className="card-title text-3xl">Welcome</h2>
 					<form onSubmit={handleSubmit}>
 						<div className="flex flex-col gap-6">

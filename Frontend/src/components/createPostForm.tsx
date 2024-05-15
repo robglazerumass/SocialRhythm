@@ -85,7 +85,7 @@ export default function CreatePostForm() {
 	return (
 		<div
 			id="create-post-modal-box"
-			className="modal-box flex flex-col gap-4 max-w-[1000px] h-4/5">
+			className="modal-box flex flex-col gap-4 max-w-[1000px] h-full">
 			<div className="modal-action m-0 p-0 absolute top-4 right-4">
 				<form
 					method="dialog"
