@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import signup_img from "../assets/signup_img.jpg";
 import { useState } from "react";
 import axios from "axios";
+import useAuth from "../service/useAuth";
+import { successNotify } from "../service/toast";
 
 export default function SignUp() {
 	const [signupForm, setSignupForm] = useState({
@@ -11,6 +13,7 @@ export default function SignUp() {
 		password: "",
 		email: "",
 	});
+	const auth = useAuth();
 	const navigate = useNavigate();
 	const handleChange = (event: { target: { name: string; value: string } }) => {
 		const { name, value } = event.target;
@@ -22,7 +25,9 @@ export default function SignUp() {
 			event.preventDefault();
 			const url = `http://localhost:3000/api/signup?firstname=${signupForm.firstname}&lastname=${signupForm.lastname}&username=${signupForm.username}&password=${signupForm.password}&email=${signupForm.email}`;
 			const data = await axios.post(url).then((res) => res.data);
-			console.log(data);
+			if (data.result == "SUCCESS") {
+				successNotify(`${data.message}. Please log in!`);
+			}
 		} catch (err: unknown) {
 			console.log(err);
 		}

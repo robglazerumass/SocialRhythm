@@ -1,7 +1,7 @@
 import { Bounce, toast } from "react-toastify";
 
-function errorNotify(message: string) {
-	toast(message, {
+export function errorNotify(message: string) {
+	toast.error(message, {
 		type: "error",
 		position: "top-right",
 		autoClose: 5000,
@@ -15,4 +15,16 @@ function errorNotify(message: string) {
 	});
 }
 
-export default errorNotify;
+export function successNotify(message: string) {
+	toast.success(message, {
+		position: "top-right",
+		autoClose: 5000,
+		hideProgressBar: false,
+		closeOnClick: true,
+		pauseOnHover: true,
+		draggable: true,
+		progress: undefined,
+		theme: "dark",
+		transition: Bounce,
+	});
+}
