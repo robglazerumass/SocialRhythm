@@ -5,7 +5,7 @@
     "description": "Backend to Social Rhythm",
     "main": "index.js",
     "scripts": {
-        "test": "set NODE_OPTIONS=--experimental-vm-modules && npx jest",
+        "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest --runInBand",
         "test:windows": "set NODE_OPTIONS=--experimental-vm-modules && npx jest",
         "start": "node index.js",
         "docs": "jsdoc src README.md --destination ./out && open ./out/index.html",
