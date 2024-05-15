@@ -3,6 +3,7 @@ import MenuBar from "../components/MenuBar";
 import ProfileLeftCard from "../components/ProfileLeftCard";
 import useAuth from "../service/useAuth";
 import { ProfileType } from "../interface";
+import ProfileRightCard from "../components/ProfileRightCard";
 
 function Profile() {
 	const auth = useAuth();
@@ -20,7 +21,9 @@ function Profile() {
 			</div>
 			<div className="h-[95%] m-4 flex flex-row w-full gap-3">
 				<ProfileLeftCard {...profileUser} />
-				<div className="profile-right-container card bg-dark-purple w-full"></div>
+				<div className="profile-right-container card bg-dark-purple w-full">
+					<ProfileRightCard posts={userData.user_post_list} />
+				</div>
 			</div>
 		</div>
 	);

@@ -25,15 +25,16 @@ export interface ProfilePageType {
 }
 
 export interface PostType {
+	key: string;
+	id: string;
 	username: string;
 	title: string;
 	description: string;
-	imgUrl: string;
-	likeList: string[];
-	dislikeList: string[];
-	commentList: string[];
-	dateCreated: Date;
-	spotifyLink: string;
+	image_url: string;
+	comments_list: object[];
+	likes_list: string[];
+	dislikes_list: string[];
+	spotify_link: string;
 }
 
 export interface MyBtnType {
