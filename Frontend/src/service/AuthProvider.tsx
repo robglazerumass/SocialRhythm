@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import errorNotify from "./toast";
+import { errorNotify, successNotify } from "./toast";
 import axios from "axios";
 
 interface AuthContextType {
@@ -14,6 +14,19 @@ interface AuthContextType {
 		currPassword: string;
 	}) => Promise<void>;
 	logoutAction: () => void;
+	signupAction: ({
+		firstName,
+		lastName,
+		email,
+		username,
+		password,
+	}: {
+		firstName: string;
+		lastName: string;
+		email: string;
+		username: string;
+		password: string;
+	}) => Promise<void>;
 }
 export const AuthContext = createContext<AuthContextType>(null!);
 
@@ -46,8 +59,28 @@ function AuthProvider({ children }: { children: ReactNode }) {
 		sessionStorage.removeItem("username");
 		navigate("/login");
 	};
+
+	const signupAction = async (newUser: {
+		firstName: string;
+		lastName: string;
+		email: string;
+		username: string;
+		password: string;
+	}) => {
+		const { firstName, lastName, email, username, password } = newUser;
+		const url = `http://localhost:3000/api/signup?firstname=${firstName}&lastname=${lastName}&username=${username}&password=${password}&email=${email}`;
+		const data = await axios
+			.post(url)
+			.then((res) => res.data)
+			.catch((err) => errorNotify(err.response.data));
+		if (data.result == "SUCCESS") {
+			successNotify(`${data.message}. Please log in!`);
+		}
+	};
+
 	return (
-		<AuthContext.Provider value={{ user, token, loginAction, logoutAction }}>
+		<AuthContext.Provider
+			value={{ user, token, loginAction, logoutAction, signupAction }}>
 			{children}
 		</AuthContext.Provider>
 	);

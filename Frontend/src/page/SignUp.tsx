@@ -3,7 +3,7 @@ import signup_img from "../assets/signup_img.jpg";
 import { useState } from "react";
 import axios from "axios";
 import useAuth from "../service/useAuth";
-import { successNotify } from "../service/toast";
+import { errorNotify, successNotify } from "../service/toast";
 
 export default function SignUp() {
 	const [signupForm, setSignupForm] = useState({
@@ -24,7 +24,10 @@ export default function SignUp() {
 		try {
 			event.preventDefault();
 			const url = `http://localhost:3000/api/signup?firstname=${signupForm.firstname}&lastname=${signupForm.lastname}&username=${signupForm.username}&password=${signupForm.password}&email=${signupForm.email}`;
-			const data = await axios.post(url).then((res) => res.data);
+			const data = await axios
+				.post(url)
+				.then((res) => res.data)
+				.catch((err) => errorNotify(err.response.data));
 			if (data.result == "SUCCESS") {
 				successNotify(`${data.message}. Please log in!`);
 			}

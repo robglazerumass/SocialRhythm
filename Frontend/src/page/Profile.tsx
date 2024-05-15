@@ -7,6 +7,11 @@ import { ProfileType } from "../interface";
 function Profile() {
 	const auth = useAuth();
 	const userData: ProfileType = useLoaderData() as ProfileType;
+	const currUser = auth.user;
+	const profileUser = {
+		...userData,
+		isCurrUser: currUser,
+	};
 	console.log(userData);
 	return (
 		<div className="profile-page flex flex-row w-screen h-screen">
@@ -14,7 +19,7 @@ function Profile() {
 				<MenuBar />
 			</div>
 			<div className="h-[95%] m-4 flex flex-row w-full gap-3">
-				<ProfileLeftCard {...userData} />
+				<ProfileLeftCard {...profileUser} />
 				<div className="profile-right-container card bg-dark-purple w-full"></div>
 			</div>
 		</div>
