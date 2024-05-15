@@ -1,5 +1,5 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FormEvent, useEffect, useState } from "react";
 import Preview from "./Preview";
 import axios from "axios";
@@ -30,7 +30,6 @@ export default function CreatePostForm() {
 	const [spotifyQuery, setSpotifyQuery] = useState("");
 	const [searchResults, setSearchResults] = useState<Track[]>([]);
 	const [hasError, setHasError] = useState(false)
-	const navigate = useNavigate()
 
 	const SEARCH_INTERVAL = 1000; // after the user stops typing for x seconds, search spotify
 

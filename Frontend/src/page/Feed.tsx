@@ -62,9 +62,6 @@ export default function Feed() {
 				</button>
 				<dialog id="create_post_modal" className="modal w-full">
 					<CreatePostForm />
-					{/* <form method="dialog" className="modal-backdrop">
-						<button className="opacity-0">close</button>
-					</form> */}
 				</dialog>
 				<div className="post-container w-full flex flex-col items-center">
 					{feedData.map((post: Post) => (

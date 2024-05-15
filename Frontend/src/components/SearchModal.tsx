@@ -1,19 +1,47 @@
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import SearchImage from "../assets/search-magnifier-magnifying-emoji-no-results-svgrepo-com.svg";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 interface userInfo {
-	username: string;
-	user_last_name: string;
-	user_first_name: string;
-	_id: string;
+	username: string,
+	user_last_name: string,
+	user_first_name: string,
+	_id: string,
+}
+
+interface Profile {
+	user_first_name: string,
+	user_last_name: string,
+	user_email: string,
+	username: string,
+	user_bio: string,
+	user_following_list: string[],
+	user_follower_list: string[],
+	user_post_list: []
 }
 
 export default function SearchModal({ selected, setSelected }: Readonly<{selected: string; setSelected: React.Dispatch<React.SetStateAction<string>>;}>) {
 	const [data, setData] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [resultMessage, setResultMessage] = useState("");
+	const {state} = useLocation()
+	const {username} = state
+	const [profile, setProfile] = useState<Profile>()
+	const [update, setUpdate] = useState(true)
+
+	useEffect(() => {
+		(async () => {
+			try{
+				const res = await axios.get(`http://localhost:3000/api/profile?username=${username}`)
+				setProfile(res.data)
+			} catch(error){
+				console.error(error)
+			}
+		})()
+	}, [])
+
 	useEffect(() => {
 		(async function fetchData() {
 			if (searchQuery.length > 0) {
@@ -37,6 +65,29 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 	const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
 		setSearchQuery(event.currentTarget.value);
 	};
+
+	const handleFollow = async (event: FormEvent<SubmitEvent>)=>{
+		try{
+			const usernameToFollow = (event.target as HTMLElement).getAttribute("forUser")
+			const _ = await axios.post(`http://localhost:3000/api/follow?username=${username}&userToFollow=${usernameToFollow}`)
+			const res = await axios.get(`http://localhost:3000/api/profile?username=${username}`)
+			setProfile(res.data)
+		} catch(error){
+			console.error(error)
+		}
+	}
+
+	const handleUnfollow = async (event: FormEvent<SubmitEvent>) => {
+		try{
+			const usernameToUnollow = (event.target as HTMLElement).getAttribute("forUser")
+			const _ = await axios.post(`http://localhost:3000/api/unfollow?username=${username}&userToUnfollow=${usernameToUnollow}`)
+			const res = await axios.get(`http://localhost:3000/api/profile?username=${username}`)
+			setProfile(res.data)
+		} catch(error){
+			console.error(error)
+		}
+	}
+
 	function handleSearchModal() {
 		setSelected(name);
 		return (
@@ -103,17 +154,21 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 								</p>
 							</>
 						) : (
-							<div className="flex shrink-1 flex-col gap-4">
-								{data.map((person: userInfo) => (
+							<div className="flex shrink-1 flex-col gap-10">
+								{data.filter((person: userInfo) => person.username !== username).map((person: userInfo) => (
 									<div className="flex justify-between items-center">
-										<img
-											src="https://marketplace.canva.com/EAFqNrAJpQs/1/0/1600w/canva-neutral-pink-modern-circle-shape-linkedin-profile-picture-WAhofEY5L1U.jpg"
-											className="h-12 w-12 rounded-full aspect-square"
-										/>
 										<p>{person.username}</p>
-										<button className="bg-primary ">
+										{profile?.user_following_list.includes(person.username) ? (
+											<button forUser={person.username} className="border-2 bg-transparent border-indigo-400 w-36 "
+											onClick={handleUnfollow}>
+											Unfollow
+										</button>
+										) : (
+											<button forUser={person.username} className="bg-primary w-36"
+											onClick={handleFollow}>
 											Follow
 										</button>
+										)}
 									</div>
 								))}
 							</div>
