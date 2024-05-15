@@ -34,7 +34,7 @@ export default function MenuBar() {
 	const { state } = useLocation();
 	const { username } = state;
 	return (
-		<div className="fixed z-10 left-10 h-screen flex flex-col justify-center w-1/12">
+		<div className="fixed z-10 left-10 top-0 h-screen flex flex-col justify-center w-1/12">
 			<ul className="menu flex bg-primary bg-opacity-30 justify-center rounded-full w-8/12 shadow-lg shadow-black">
 				<div className=" flex flex-col justify-between w-full gap-8">
 				<SearchModal selected={selected}
@@ -51,6 +51,8 @@ export default function MenuBar() {
 						icon={<UserCircleIcon className="h-6 w-6" />}
 						name="Profile"
 						linkTo={`/user/${username}`}
+						selected={selected}
+						setSelected={setSelected}
 					/>
 				</div>
 			</ul>

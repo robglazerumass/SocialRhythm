@@ -11,7 +11,7 @@ interface Post {
 	username: string;
 	title: string;
 	description: string;
-	img: string;
+	image_url: string;
 	comments_list: object[];
 	likes_list: string[];
 	dislikes_list: string[];
@@ -62,12 +62,9 @@ export default function Feed() {
 				</button>
 				<dialog id="create_post_modal" className="modal w-full">
 					<CreatePostForm />
-					{/* <form method="dialog" className="modal-backdrop">
-						<button className="opacity-0">close</button>
-					</form> */}
 				</dialog>
 				<div className="post-container w-full flex flex-col items-center">
-					{feedData.map((post: Post) => (
+					{feedData.length > 0 ?feedData.map((post: Post) => (
 						<Post
 							key={post._id}
 							id={post._id}
@@ -80,7 +77,7 @@ export default function Feed() {
 							dislikes_list={post.dislikes_list}
 							spotify_link={post.spotify_link}
 						/>
-					))}
+					)) : <p className="text-3xl font-extrabold absolute top-1/2">Search and Follow to see posts</p>}
 				</div>
 			</div>
 		</div>
