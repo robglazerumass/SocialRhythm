@@ -9,8 +9,8 @@ function Profile() {
 	const userData: ProfileType = useLoaderData() as ProfileType;
 	const currUser = auth.user;
 	const profileUser = {
+		currUser: currUser,
 		...userData,
-		isCurrUser: currUser,
 	};
 	console.log(userData);
 	return (
