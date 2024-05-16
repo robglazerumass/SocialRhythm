@@ -131,7 +131,7 @@ export async function rating(requestType, ratingType, username, destId) {
         dest = await PostData.findOne({ _id: destId });
     }
     catch (error) {
-        throw BackendErrorType.POST_DNE;
+        throw BackendErrorType.INVALID_DESTID;
     }
 
     if (dest == null) {
@@ -139,7 +139,7 @@ export async function rating(requestType, ratingType, username, destId) {
             dest = await CommentData.findOne({ _id: destId });
         }
         catch (error) {
-            throw BackendErrorType.COMMENT_DNE;
+            throw BackendErrorType.INVALID_DESTID;
         }
 
         if (dest == null) {
