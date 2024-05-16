@@ -5,7 +5,12 @@ import {
 import { useState } from "react";
 import CommentModal from "./CommentModal";
 
-export default function Interaction({postId, comments_list, likes, dislikes}) {
+export default function Interaction({
+	postId,
+	comments_list,
+	likes,
+	dislikes,
+}) {
 	const [activeElementId, setActiveElementId] = useState("");
 
 	async function handleCommentModal() {
@@ -21,28 +26,34 @@ export default function Interaction({postId, comments_list, likes, dislikes}) {
 		).showModal();
 	}
 
-    const handleCLick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setActiveElementId(event.currentTarget.id)
+	const handleCLick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		setActiveElementId(event.currentTarget.id);
 		// handleCommentModal()
-    }
+	};
 
-    const getBgColor = (elementId: string) => {
-        return elementId === activeElementId ? "bg-primary" : "bg-neutral-600"
-    }
+	const getBgColor = (elementId: string) => {
+		return elementId === activeElementId ? "bg-primary" : "bg-neutral-600";
+	};
 
 	return (
-		<div className="interaction-row flex flex-row justify-between py-6 w-full">
+		<div className="interaction-row flex flex-row justify-between py-6 w-full gap-2">
 			<div className="like-dislike-div flex gap-4">
-				<button className={`like-btn bg-purple-200 bg-opacity-20 flex items-center ${getBgColor("likes")}`}
-                id="likes"
-                onClick={handleCLick}>
+				<button
+					className={`like-btn bg-purple-200 bg-opacity-20 flex items-center ${getBgColor(
+						"likes"
+					)}`}
+					id="likes"
+					onClick={handleCLick}>
 					<HandThumbUpIcon className="h-6 inline" />
 					<span className="px-2">&middot;</span>
 					<span>{likes.length}</span>
 				</button>
-				<button className={`dislike-btn bg-purple-200 bg-opacity-20 flex items-center ${getBgColor("dislikes")}`}
-                id="dislikes"
-                onClick={handleCLick}>
+				<button
+					className={`dislike-btn bg-purple-200 bg-opacity-20 flex items-center ${getBgColor(
+						"dislikes"
+					)}`}
+					id="dislikes"
+					onClick={handleCLick}>
 					<HandThumbDownIcon className="h-6 inline" />
 					<span className="px-2">&middot;</span>
 					<span>{dislikes.length}</span>
@@ -56,7 +67,7 @@ export default function Interaction({postId, comments_list, likes, dislikes}) {
 				<ChatBubbleOvalLeftIcon className="h-6" />
 				<span>{comments_list.length}</span>
 			</button> */}
-			<CommentModal postId={postId} comment_count={comments_list.length}/>
+			<CommentModal postId={postId} comment_count={comments_list.length} />
 		</div>
 	);
 }

@@ -3,43 +3,54 @@ import { FormEvent, useEffect, useState } from "react";
 import SearchImage from "../assets/search-magnifier-magnifying-emoji-no-results-svgrepo-com.svg";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import useAuth from "../service/useAuth";
 
 interface userInfo {
-	username: string,
-	user_last_name: string,
-	user_first_name: string,
-	_id: string,
+	username: string;
+	user_last_name: string;
+	user_first_name: string;
+	_id: string;
 }
 
 interface Profile {
-	user_first_name: string,
-	user_last_name: string,
-	user_email: string,
-	username: string,
-	user_bio: string,
-	user_following_list: string[],
-	user_follower_list: string[],
-	user_post_list: []
+	user_first_name: string;
+	user_last_name: string;
+	user_email: string;
+	username: string;
+	user_bio: string;
+	user_following_list: string[];
+	user_follower_list: string[];
+	user_post_list: [];
 }
 
-export default function SearchModal({ selected, setSelected }: Readonly<{selected: string; setSelected: React.Dispatch<React.SetStateAction<string>>;}>) {
+export default function SearchModal({
+	selected,
+	setSelected,
+}: Readonly<{
+	selected: string;
+	setSelected: React.Dispatch<React.SetStateAction<string>>;
+}>) {
 	const [data, setData] = useState([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [resultMessage, setResultMessage] = useState("");
-	const {state} = useLocation()
-	const {username} = state
-	const [profile, setProfile] = useState<Profile>()
+	// const {state} = useLocation()
+	// const {username} = state
+	const auth = useAuth();
+	const username = auth.user;
+	const [profile, setProfile] = useState<Profile>();
 
 	useEffect(() => {
 		(async () => {
-			try{
-				const res = await axios.get(`http://localhost:3000/api/profile?username=${username}`)
-				setProfile(res.data)
-			} catch(error){
-				console.error(error)
+			try {
+				const res = await axios.get(
+					`http://localhost:3000/api/profile?username=${username}`
+				);
+				setProfile(res.data);
+			} catch (error) {
+				console.error(error);
 			}
-		})()
-	}, [])
+		})();
+	}, []);
 
 	useEffect(() => {
 		(async function fetchData() {
@@ -65,27 +76,39 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 		setSearchQuery(event.currentTarget.value);
 	};
 
-	const handleFollow = async (event: React.MouseEvent<HTMLButtonElement>)=>{
-		try{
-			const usernameToFollow = (event.target as HTMLElement).getAttribute("forUser")
-			const _ = await axios.post(`http://localhost:3000/api/follow?username=${username}&userToFollow=${usernameToFollow}`)
-			const res = await axios.get(`http://localhost:3000/api/profile?username=${username}`)
-			setProfile(res.data)
-		} catch(error){
-			console.error(error)
+	const handleFollow = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		try {
+			const usernameToFollow = (event.target as HTMLElement).getAttribute(
+				"forUser"
+			);
+			const _ = await axios.post(
+				`http://localhost:3000/api/follow?username=${username}&userToFollow=${usernameToFollow}`
+			);
+			const res = await axios.get(
+				`http://localhost:3000/api/profile?username=${username}`
+			);
+			setProfile(res.data);
+		} catch (error) {
+			console.error(error);
 		}
-	}
+	};
 
 	const handleUnfollow = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		try{
-			const usernameToUnollow = (event.target as HTMLElement).getAttribute("forUser")
-			await axios.post(`http://localhost:3000/api/unfollow?username=${username}&userToUnfollow=${usernameToUnollow}`)
-			const res = await axios.get(`http://localhost:3000/api/profile?username=${username}`)
-			setProfile(res.data)
-		} catch(error){
-			console.error(error)
+		try {
+			const usernameToUnollow = (event.target as HTMLElement).getAttribute(
+				"forUser"
+			);
+			await axios.post(
+				`http://localhost:3000/api/unfollow?username=${username}&userToUnfollow=${usernameToUnollow}`
+			);
+			const res = await axios.get(
+				`http://localhost:3000/api/profile?username=${username}`
+			);
+			setProfile(res.data);
+		} catch (error) {
+			console.error(error);
 		}
-	}
+	};
 
 	function handleSearchModal() {
 		setSelected(name);
@@ -103,8 +126,7 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 				className={`m-0 rounded-full h-16 w-16 ${
 					isSelected ? `bg-white bg-opacity-30` : `bg-transparent`
 				}`}
-				onClick={handleSearchModal}
-			>
+				onClick={handleSearchModal}>
 				<a className="flex justify-center gap-2 text-white flex-col p-0 items-center">
 					<MagnifyingGlassIcon className="h-6 w-6" />
 				</a>
@@ -115,8 +137,11 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 						<p className="text-3xl font-bold">Searches</p>
 						<form method="dialog">
 							{/* if there is a button in form, it will close the modal */}
-							<button className="btn btn-sm btn-circle btn-ghost flex items-center"
-							onClick={() => {setSelected("Feed")}}>
+							<button
+								className="btn btn-sm btn-circle btn-ghost flex items-center"
+								onClick={() => {
+									setSelected("Feed");
+								}}>
 								<XMarkIcon />
 							</button>
 						</form>
@@ -125,8 +150,7 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 						onSubmit={(event) => {
 							event.preventDefault();
 						}}
-						className="sticky top-0 flex items-stretch w-full justify-between py-4 px-8 backdrop-blur-md gap-4 h-20"
-					>
+						className="sticky top-0 flex items-stretch w-full justify-between py-4 px-8 backdrop-blur-md gap-4 h-20">
 						<input
 							placeholder="Search for users..."
 							type="text"
@@ -134,10 +158,7 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 							value={searchQuery}
 							onChange={handleChange}
 						/>
-						<button
-							className="bg-primary rounded-2xl"
-							type="submit"
-						>
+						<button className="bg-primary rounded-2xl" type="submit">
 							<MagnifyingGlassIcon className="h-6" />
 						</button>
 					</form>
@@ -154,27 +175,40 @@ export default function SearchModal({ selected, setSelected }: Readonly<{selecte
 							</>
 						) : (
 							<div className="flex shrink-1 flex-col gap-10">
-								{data.filter((person: userInfo) => person.username !== username).map((person: userInfo) => (
-									<div className="flex justify-between items-center">
-										<p>{person.username}</p>
-										{profile?.user_following_list.includes(person.username) ? (
-											<button forUser={person.username} className="border-2 bg-transparent border-indigo-400 w-36 "
-											onClick={handleUnfollow}>
-											Unfollow
-										</button>
-										) : (
-											<button forUser={person.username} className="bg-primary w-36"
-											onClick={handleFollow}>
-											Follow
-										</button>
-										)}
-									</div>
-								))}
+								{data
+									.filter((person: userInfo) => person.username !== username)
+									.map((person: userInfo) => (
+										<div className="flex justify-between items-center">
+											<p>{person.username}</p>
+											{profile?.user_following_list.includes(
+												person.username
+											) ? (
+												<button
+													forUser={person.username}
+													className="border-2 bg-transparent border-indigo-400 w-36 "
+													onClick={handleUnfollow}>
+													Unfollow
+												</button>
+											) : (
+												<button
+													forUser={person.username}
+													className="bg-primary w-36"
+													onClick={handleFollow}>
+													Follow
+												</button>
+											)}
+										</div>
+									))}
 							</div>
 						)}
 					</div>
 				</div>
-				<form method="dialog" className="modal-backdrop" onClick={() => {setSelected("Feed")}}>
+				<form
+					method="dialog"
+					className="modal-backdrop"
+					onClick={() => {
+						setSelected("Feed");
+					}}>
 					<button className="opacity-0">close</button>
 				</form>
 			</dialog>

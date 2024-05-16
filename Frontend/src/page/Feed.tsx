@@ -1,9 +1,10 @@
 import MenuBar from "../components/MenuBar";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Post from "../components/Post";
 import CreatePostForm from "../components/createPostForm";
+import useAuth from "../service/useAuth";
 
 interface Post {
 	key: string;
@@ -19,15 +20,18 @@ interface Post {
 }
 
 export default function Feed() {
+	const auth = useAuth();
 	const [feedData, setFeedData] = useState([]);
-	const { state } = useLocation();
-	const { username } = state;
+	// const { state } = useLocation();
+	// const { username } = state;
+	const username = auth.user;
 	useEffect(() => {
 		async function fetchPosts() {
-			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
+			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=10&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
 			setFeedData(data);
 		}
+		3;
 		fetchPosts();
 	}, [username]);
 	return (
@@ -38,20 +42,16 @@ export default function Feed() {
 					className="btn bg-primary bg-opacity-30 border-none text-white shadow-none justify-start gap-7 fixed right-10 bottom-10 hover:bg-primary hover:bg-opacity-30 hover:text-[#646cff]"
 					onClick={() => {
 						(
-							document.getElementById(
-								"create_post_modal"
-							) as HTMLDialogElement
+							document.getElementById("create_post_modal") as HTMLDialogElement
 						)?.showModal();
-					}}
-				>
+					}}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
 						strokeWidth={1.5}
 						stroke="currentColor"
-						className="w-6 h-6"
-					>
+						className="w-6 h-6">
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"
@@ -64,20 +64,26 @@ export default function Feed() {
 					<CreatePostForm />
 				</dialog>
 				<div className="post-container w-full flex flex-col items-center">
-					{feedData.length > 0 ?feedData.map((post: Post) => (
-						<Post
-							key={post._id}
-							id={post._id}
-							username={post.username}
-							title={post.title}
-							description={post.description}
-							image_url={post.image_url}
-							comments_list={post.comments_list}
-							likes_list={post.likes_list}
-							dislikes_list={post.dislikes_list}
-							spotify_link={post.spotify_link}
-						/>
-					)) : <p className="text-3xl font-extrabold absolute top-1/2">Search and Follow to see posts</p>}
+					{feedData.length > 0 ? (
+						feedData.map((post: Post) => (
+							<Post
+								key={post._id}
+								id={post._id}
+								username={post.username}
+								title={post.title}
+								description={post.description}
+								image_url={post.image_url}
+								comments_list={post.comments_list}
+								likes_list={post.likes_list}
+								dislikes_list={post.dislikes_list}
+								spotify_link={post.spotify_link}
+							/>
+						))
+					) : (
+						<p className="text-3xl font-extrabold absolute top-1/2">
+							Search and Follow to see posts
+						</p>
+					)}
 				</div>
 			</div>
 		</div>

@@ -5,28 +5,30 @@ import signup_img from "../assets/signup_img.jpg";
 import { toast, Bounce } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+import useAuth from "../service/useAuth";
 // minified version is also included
 // import 'react-toastify/dist/ReactToastify.min.css';
 
 function Login() {
 	const [loginForm, setLoginForm] = useState({ username: "", password: "" });
 	const [showPassword, setShowPassword] = useState(false);
+	const auth = useAuth();
 	// const [navPossible, setNavPossible] = useState(false);
-	const navigate = useNavigate();
-	const errorNotify = (message: string) => {
-		toast(message, {
-			type: "error",
-			position: "top-right",
-			autoClose: 5000,
-			hideProgressBar: true,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "light",
-			transition: Bounce,
-		});
-	};
+	// const navigate = useNavigate();
+	// const errorNotify = (message: string) => {
+	// 	toast(message, {
+	// 		type: "error",
+	// 		position: "top-right",
+	// 		autoClose: 5000,
+	// 		hideProgressBar: true,
+	// 		closeOnClick: true,
+	// 		pauseOnHover: true,
+	// 		draggable: true,
+	// 		progress: undefined,
+	// 		theme: "light",
+	// 		transition: Bounce,
+	// 	});
+	// };
 
 	const handleShowPassword = () => {
 		if (!showPassword) setShowPassword(true);
@@ -40,6 +42,7 @@ function Login() {
 
 	const handleSubmit = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
+		/*
 		const url = `http://localhost:3000/api/login?username=${loginForm.username}&password=${loginForm.password}`;
 		const data = await axios
 			.get(url)
@@ -52,11 +55,18 @@ function Login() {
 			// console.log("succeeded");
 			// setNavPossible(true);
 		}
+		*/
+		console.log("auth", auth);
+		const loginInputs = {
+			currUsername: loginForm.username,
+			currPassword: loginForm.password,
+		};
+		auth.loginAction(loginInputs);
 	};
 
 	return (
 		<div className="flex items-center justify-center h-screen">
-			<div className="flex flex-row bg-base-100 w-full shadow-xl h-5/6 lg:w-5/6 rounded-lg">
+			<div className="flex flex-row bg-base-100 w-full shadow-xl h-[90%] lg:w-5/6 rounded-lg">
 				<div className="flex w-0 lg:w-3/5">
 					<img
 						className="rounded-l-lg object-cover"
@@ -64,7 +74,7 @@ function Login() {
 						alt="party"
 					/>
 				</div>
-				<div className="card-body lg:w-96 flex justify-center">
+				<div className="card-body bg-dark-purple lg:w-96 flex justify-center rounded-lg">
 					<h2 className="card-title text-3xl">Login</h2>
 					<div className="flex flex-col gap-3">
 						<form className="flex flex-col gap-2" onSubmit={handleSubmit}>

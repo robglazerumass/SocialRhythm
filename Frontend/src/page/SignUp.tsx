@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import signup_img from "../assets/signup_img.jpg";
 import { useState } from "react";
 import axios from "axios";
+import useAuth from "../service/useAuth";
+import { errorNotify, successNotify } from "../service/toast";
 
 export default function SignUp() {
 	const [signupForm, setSignupForm] = useState({
@@ -11,6 +13,7 @@ export default function SignUp() {
 		password: "",
 		email: "",
 	});
+	const auth = useAuth();
 	const navigate = useNavigate();
 	const handleChange = (event: { target: { name: string; value: string } }) => {
 		const { name, value } = event.target;
@@ -21,15 +24,20 @@ export default function SignUp() {
 		try {
 			event.preventDefault();
 			const url = `http://localhost:3000/api/signup?firstname=${signupForm.firstname}&lastname=${signupForm.lastname}&username=${signupForm.username}&password=${signupForm.password}&email=${signupForm.email}`;
-			const data = await axios.post(url).then((res) => res.data);
-			console.log(data);
+			const data = await axios
+				.post(url)
+				.then((res) => res.data)
+				.catch((err) => errorNotify(`${err.response.data}. Please log in!`));
+			if (data.result == "SUCCESS") {
+				successNotify(`${data.message}. Please log in!`);
+			}
 		} catch (err: unknown) {
 			console.log(err);
 		}
 	};
 	return (
 		<div className="flex items-center justify-center h-screen">
-			<div className="flex flex-row bg-base-100 w-full shadow-xl h-5/6 lg:w-5/6 rounded-lg">
+			<div className="flex flex-row bg-base-100 w-full shadow-xl h-[90%] lg:w-5/6 rounded-lg">
 				<div className="flex w-0 lg:w-3/5">
 					<img
 						className="rounded-l-lg object-cover"
@@ -37,7 +45,7 @@ export default function SignUp() {
 						alt="party"
 					/>
 				</div>
-				<div className="card-body lg:w-96">
+				<div className="card-body bg-dark-purple lg:w-96">
 					<h2 className="card-title text-3xl">Welcome</h2>
 					<form onSubmit={handleSubmit}>
 						<div className="flex flex-col gap-6">

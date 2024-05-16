@@ -9,6 +9,7 @@ import Feed from "./page/Feed.tsx";
 import { ToastContainer, Bounce } from "react-toastify";
 import Profile from "./page/Profile.tsx";
 import idLoader from "./service/getId.tsx";
+import AuthProvider from "./service/AuthProvider.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -17,7 +18,11 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "login",
-		element: <Login />,
+		element: (
+			<AuthProvider>
+				<Login />
+			</AuthProvider>
+		),
 	},
 	{
 		path: "signup",
@@ -25,15 +30,27 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "friends",
-		element: <Feed />,
+		element: (
+			<AuthProvider>
+				<Login />
+			</AuthProvider>
+		),
 	},
 	{
 		path: "feed",
-		element: <Feed />,
+		element: (
+			<AuthProvider>
+				<Feed />
+			</AuthProvider>
+		),
 	},
 	{
 		path: "/user/:username",
-		element: <Profile />,
+		element: (
+			<AuthProvider>
+				<Profile />
+			</AuthProvider>
+		),
 		loader: ({ params }) => {
 			if (params == undefined) return idLoader("alice123");
 			return idLoader(params.username as string);
@@ -54,7 +71,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 			pauseOnFocusLoss
 			draggable
 			pauseOnHover
-			theme="light"
+			theme="dark"
 			transition={Bounce}
 		/>
 	</React.StrictMode>
