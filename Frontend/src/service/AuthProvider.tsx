@@ -2,9 +2,11 @@ import { ReactNode, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { errorNotify, successNotify } from "./toast";
 import axios from "axios";
+import { ProfileType } from "../interface";
+import idLoader from "./getId";
 
 interface AuthContextType {
-	user: string;
+	user: ProfileType;
 	token: string;
 	loginAction: ({
 		currUsername,
@@ -31,7 +33,15 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>(null!);
 
 function AuthProvider({ children }: { children: ReactNode }) {
-	const [user, setUser] = useState("");
+	const [user, setUser] = useState<ProfileType>({
+		username: "",
+		user_bio: "",
+		user_first_name: "",
+		user_last_name: "",
+		user_follower_list: [],
+		user_following_list: [],
+		user_post_list: [],
+	});
 	const [token, setToken] = useState(sessionStorage.getItem("username") || "");
 	const navigate = useNavigate();
 
@@ -46,17 +56,32 @@ function AuthProvider({ children }: { children: ReactNode }) {
 			.then((res) => res.data)
 			.catch((err) => errorNotify(err.response.data));
 		if (data.result == "SUCCESS") {
-			setUser(currUsername);
-			setToken(currUsername);
-			sessionStorage.setItem("username", currUsername);
-			navigate("/feed");
+			console.log("fetching ...");
+			try {
+				const profileData = await idLoader(currUsername);
+				console.log("fetched successfull ", profileData);
+				setUser(profileData);
+				setToken(currUsername);
+				sessionStorage.setItem("currUser", currUsername);
+				navigate("/feed");
+			} catch (err) {
+				console.log(err);
+			}
 		}
 	};
 
 	const logoutAction = () => {
-		setUser("");
+		setUser({
+			username: "",
+			user_bio: "",
+			user_first_name: "",
+			user_last_name: "",
+			user_follower_list: [],
+			user_following_list: [],
+			user_post_list: [],
+		});
 		setToken("");
-		sessionStorage.removeItem("username");
+		sessionStorage.removeItem("currUser");
 		navigate("/login");
 	};
 

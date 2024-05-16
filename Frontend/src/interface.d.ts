@@ -26,7 +26,7 @@ export interface ProfilePageType {
 
 export interface PostType {
 	key: string;
-	id: string;
+	_id: string;
 	username: string;
 	title: string;
 	description: string;
