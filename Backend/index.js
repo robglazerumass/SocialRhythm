@@ -28,25 +28,6 @@ function isValidQuery(queryList) {
 }
 
 /**
- * Validates the rating for a post.
- * @param {Object} user - The user object.
- * @param {Object} post - The post object.
- * @param {string} ratingType - The type of rating (like or dislike).
- * @returns {boolean} - Returns true if the user has not already liked or disliked the post, false otherwise.
-*/
-function validateRating(user, post, ratingType) {
-    let likes = post.likes_list;
-    let dislikes = post.dislikes_list;
-
-    if (likes.includes(user.username) || dislikes.includes(user.username)) {
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
-/**
  * Search query field: { username, password }
  * Login API endpoint.
  * Validates the username and password provided in the query parameters.
