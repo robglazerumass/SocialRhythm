@@ -56,7 +56,6 @@ function Login() {
 			// setNavPossible(true);
 		}
 		*/
-		console.log("auth", auth);
 		const loginInputs = {
 			currUsername: loginForm.username,
 			currPassword: loginForm.password,

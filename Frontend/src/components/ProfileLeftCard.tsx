@@ -2,6 +2,7 @@ import axios from "axios";
 import { ProfilePageType } from "../interface";
 import { errorNotify, successNotify } from "../service/toast";
 import BtnWide from "./BtnWide";
+import { useState } from "react";
 
 function FollowList({ name }: { name: string }) {
 	return <div className="flex flex-row text-md">{name}</div>;
@@ -46,6 +47,16 @@ function FollowDisplay({
 function ProfileLeftCard(props: ProfilePageType) {
 	const profileLink =
 		"https://cdn.saleminteractivemedia.com/shared/images/default-cover-art.png";
+	const [isCurrUser, setIsCurrUser] = useState(false);
+	const [follow, setFollow] = useState(false);
+
+	const checkCurrUser = () => {
+		if (props.currUser == props.username) setIsCurrUser(true);
+	};
+
+	const checkFollowed = () => {
+		if (props.currUser) return;
+	};
 
 	/*
 		const testName = [
@@ -79,12 +90,12 @@ function ProfileLeftCard(props: ProfilePageType) {
 	return (
 		<div className="profile-left-container card bg-dark-purple w-2/5 flex flex-col">
 			<figure className="px-10 pt-0">
-				<img src={profileLink} className="rounded-full h-2/3"></img>
+				<img src={profileLink} className="rounded-full h-5/6"></img>
 			</figure>
-			<div className="card-body py-1 justify-start">
-				<div className="card-title flex flex-col justify-start gap-2 m-3">
-					<h2 className="text-[2.5rem]">{`${props.user_first_name} ${props.user_last_name}`}</h2>
-					<p className="font-extralight text-md">{`@${props.username}`}</p>
+			<div className="card-body justify-start">
+				<div className="card-title flex flex-col justify-start text-start gap-2 mb-3 items-start pl-6">
+					<h2 className="text-[2.5rem] leading-10">{`${props.user_first_name} ${props.user_last_name}`}</h2>
+					<p className="font-extralight text-md items-start">{`@${props.username}`}</p>
 					<div className="bio-text text-[1.05rem] font-light">
 						<p className="break-words line-clamp-2 min-h-20">{`${props.user_bio} more bio if this is two shorts. If it exceeds 2 words then...`}</p>
 					</div>

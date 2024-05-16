@@ -10,11 +10,11 @@ function PostCard(props: PostType) {
 		dislikes: props.dislikes_list,
 	};
 	return (
-		<div className="card card-side card-compact bg-[#54157d] shadow-xl h-2/3 justify-start max-h-2/3">
+		<div className="card card-side bg-[#54157d] shadow-xl h-60 justify-start max-h-2/3">
 			<figure
-				className="flex flex-row w-4/5"
+				className="flex flex-row"
 				style={{ justifyContent: "flex-start" }}>
-				<img className="w-4/5" src={props.image_url} />
+				<img src={props.image_url} />
 			</figure>
 			<div className="card-body">
 				<h2 className="card-title">{props.title}</h2>
@@ -30,7 +30,7 @@ function PostCard(props: PostType) {
 function ProfileRightCard({ posts }: { posts: PostType[] }) {
 	console.log("right props ", posts);
 	return (
-		<div className="p-4 overflow-y-scroll">
+		<div className="p-4">
 			{posts.map((post) => (
 				<PostCard {...post} />
 			))}
