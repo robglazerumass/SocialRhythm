@@ -11,6 +11,8 @@ interface CommentInfo {
 	comment_like_list: [],
 	comment_dislike_list: [],
 	date_created: string;
+	like_count: number;
+	dislike_count: number;
 }
 
 interface CommentProps {
@@ -63,12 +65,12 @@ export default function CommentModal({ postId, comment_count}: Readonly<CommentP
 		try{
 			console.log(postId)
 			const url = `http://localhost:3000/api/createComment?username=${username}&postId=${postId}&commentString=${addedComment}`
-			const postCommentRes = await axios.post(url)
+			await axios.post(url)
 			const res = await axios.get(`http://localhost:3000/api/getComments?postId=${postId}`)
 			setComments(res.data)
 			setAddedComment("")
 		} catch(error){
-			console.log(error.message)
+			console.error(error.message)
 		}
 		
 	}

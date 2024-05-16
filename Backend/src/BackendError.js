@@ -50,7 +50,8 @@ export const BackendErrorType = Object.freeze({
     COMMENT_DNE: new BackendError(716, "Comment Does Not Exist."),
     POST_COMMENT_DNE: new BackendError(717, "Comment or Post Does Not Exist."),
     INVALID_RATINGTYPE: new BackendError(718, "Invalid Rating Type."),
-    INVALID_REQUESTTYPE: new BackendError(719, "Invalid Rating Type."),
+    INVALID_REQUESTTYPE: new BackendError(719, "Invalid Request Type."),
     SELF_UNFOLLOW: new BackendError(720, "Cannot unfollow yourself."),
-    NOT_FOLLOWING: new BackendError(721, "You are not following this user.")
+    NOT_FOLLOWING: new BackendError(721, "You are not following this user."),
+    INVALID_DESTID: new BackendError(722, "Invalid Post or Comment ID"),
 });
