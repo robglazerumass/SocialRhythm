@@ -45,10 +45,8 @@ export default function Feed() {
 			const data = await axios
 				.get(nextURL)
 				.then((res) => res.data)
-				.catch((err) => {
-					if (err.response.status == 710) {
-						setFeedData([]);
-					}
+				.catch(() => {
+					return [];
 				});
 			console.log("data from feed ", data);
 			setFeedData(data);
