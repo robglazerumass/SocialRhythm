@@ -27,10 +27,11 @@ export default function Feed() {
 	const username = auth.user;
 	useEffect(() => {
 		async function fetchPosts() {
-			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=3&pageNum=0`;
+			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=10&pageNum=0`;
 			const data = await axios.get(nextURL).then((res) => res.data);
 			setFeedData(data);
 		}
+		3;
 		fetchPosts();
 	}, [username]);
 	return (

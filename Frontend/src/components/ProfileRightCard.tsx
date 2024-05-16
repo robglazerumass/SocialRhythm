@@ -30,7 +30,7 @@ function PostCard(props: PostType) {
 function ProfileRightCard({ posts }: { posts: PostType[] }) {
 	console.log("right props ", posts);
 	return (
-		<div className="no-scrollbar p-4 overflow-y-scroll">
+		<div className="p-4 overflow-y-scroll">
 			{posts.map((post) => (
 				<PostCard {...post} />
 			))}

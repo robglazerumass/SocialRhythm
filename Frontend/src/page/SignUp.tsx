@@ -27,7 +27,7 @@ export default function SignUp() {
 			const data = await axios
 				.post(url)
 				.then((res) => res.data)
-				.catch((err) => errorNotify(err.response.data));
+				.catch((err) => errorNotify(`${err.response.data}. Please log in!`));
 			if (data.result == "SUCCESS") {
 				successNotify(`${data.message}. Please log in!`);
 			}
