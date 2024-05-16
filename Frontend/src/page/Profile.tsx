@@ -10,8 +10,8 @@ function Profile() {
 	const userData: ProfileType = useLoaderData() as ProfileType;
 	const currUser = auth.user;
 	const profileUser = {
-		currUser: currUser,
-		...userData,
+		visitUser: currUser,
+		targetUser: userData,
 	};
 	console.log(userData);
 	return (

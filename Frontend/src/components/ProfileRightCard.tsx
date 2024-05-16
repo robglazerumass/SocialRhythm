@@ -4,7 +4,7 @@ import Interaction from "./Interaction";
 
 function PostCard(props: PostType) {
 	const paraInteraction = {
-		postId: props.id,
+		postId: props._id,
 		comments_list: props.comments_list,
 		likes: props.likes_list,
 		dislikes: props.dislikes_list,
