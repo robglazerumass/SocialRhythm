@@ -126,6 +126,7 @@ For security reasons the corresponding parts of each environment variable will r
 3. In its current state the like and dislike buttons do nothing on the frontend. The functionality exists on the backend but unfortunately no connection was made between the two.
 4. When creating a post you will be able to play a preview of the song you are selecting to share. Unfortunately only some songs work for the preview and those that do will continue to play even after closing the window unless manually stopped or the end of the preview has been reached.
 5. npm has a bug related to optional dependencies. This may result in an issue when following the steps to run the frontend. The error will involve a missing module but this can easily be resolved by remvoing both package-lock.json and the node_modules directory and trying npm install again.
+6. When you create a new user and start following someone, your feed will not update immediately to contain their posts. You have to change the link to "http://localhost:5173/" to go back to the main page before logging in, and then their posts will pop up on your feed.
  
 ## Authors
 
