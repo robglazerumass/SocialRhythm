@@ -14,19 +14,20 @@ export interface ProfileType {
 }
 
 export interface ProfilePageType {
-	currUser: string;
-	username: string;
-	user_bio: string;
-	user_first_name: string;
-	user_last_name: string;
-	user_follower_list: string[];
-	user_following_list: string[];
-	user_post_list: PostType[];
+	visitUser: ProfileType;
+	// username: string;
+	// user_bio: string;
+	// user_first_name: string;
+	// user_last_name: string;
+	// user_follower_list: string[];
+	// user_following_list: string[];
+	// user_post_list: PostType[];
+	targetUser: ProfileType;
 }
 
 export interface PostType {
 	key: string;
-	id: string;
+	_id: string;
 	username: string;
 	title: string;
 	description: string;

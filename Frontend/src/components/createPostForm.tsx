@@ -21,7 +21,7 @@ export default function CreatePostForm() {
 	// const { state } = useLocation();
 	// const { username } = state;
 	const auth = useAuth();
-	const username = auth.user;
+	const username = auth.user.username;
 	const [postData, setPostData] = useState({
 		username: username,
 		title: "",

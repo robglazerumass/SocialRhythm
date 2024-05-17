@@ -5,6 +5,7 @@ import axios from "axios";
 import Post from "../components/Post";
 import CreatePostForm from "../components/createPostForm";
 import useAuth from "../service/useAuth";
+import { PostType } from "../interface";
 
 interface Post {
 	key: string;
@@ -21,19 +22,37 @@ interface Post {
 
 export default function Feed() {
 	const auth = useAuth();
-	const [feedData, setFeedData] = useState([]);
+	const [feedData, setFeedData] = useState<PostType[]>(
+		auth.user.user_post_list
+	);
 	// const { state } = useLocation();
 	// const { username } = state;
-	const username = auth.user;
+
 	useEffect(() => {
 		async function fetchPosts() {
-			const nextURL: string = `http://localhost:3000/api/feed?username=${username}&xPosts=10&pageNum=0`;
-			const data = await axios.get(nextURL).then((res) => res.data);
+			/*
+			const nextURL: string = `http://localhost:3000/api/feed?username=${auth.user}&xPosts=10&pageNum=0`;
+			const data = await axios
+				.get(nextURL)
+				.then((res) => res.data)
+				.catch((err) => {
+					if (err.response.status == 710) {
+						setFeedData([]);
+					}
+				});
+			*/
+			const nextURL: string = `http://localhost:3000/api/feed?username=${auth.user.username}&xPosts=10&pageNum=0`;
+			const data = await axios
+				.get(nextURL)
+				.then((res) => res.data)
+				.catch(() => {
+					return [];
+				});
+			console.log("data from feed ", data);
 			setFeedData(data);
 		}
-		3;
 		fetchPosts();
-	}, [username]);
+	}, [auth.user]);
 	return (
 		<div className="homepage inline-flex flex-row w-screen">
 			<MenuBar />
@@ -65,7 +84,7 @@ export default function Feed() {
 				</dialog>
 				<div className="post-container w-full flex flex-col items-center">
 					{feedData.length > 0 ? (
-						feedData.map((post: Post) => (
+						feedData.map((post: PostType) => (
 							<Post
 								key={post._id}
 								id={post._id}

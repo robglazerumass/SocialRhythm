@@ -4,6 +4,7 @@ import SearchImage from "../assets/search-magnifier-magnifying-emoji-no-results-
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import useAuth from "../service/useAuth";
+import { ProfileType } from "../interface";
 
 interface userInfo {
 	username: string;
@@ -36,21 +37,22 @@ export default function SearchModal({
 	// const {state} = useLocation()
 	// const {username} = state
 	const auth = useAuth();
-	const username = auth.user;
-	const [profile, setProfile] = useState<Profile>();
+	const user = auth.user;
+	const username = user.username;
+	const [profile, setProfile] = useState<ProfileType>(user);
 
-	useEffect(() => {
-		(async () => {
-			try {
-				const res = await axios.get(
-					`http://localhost:3000/api/profile?username=${username}`
-				);
-				setProfile(res.data);
-			} catch (error) {
-				console.error(error);
-			}
-		})();
-	}, []);
+	// useEffect(() => {
+	// 	(async () => {
+	// 		try {
+	// 			const res = await axios.get(
+	// 				`http://localhost:3000/api/profile?username=${username}`
+	// 			);
+	// 			setProfile(res.data);
+	// 		} catch (error) {
+	// 			console.error(error);
+	// 		}
+	// 	})();
+	// }, []);
 
 	useEffect(() => {
 		(async function fetchData() {
